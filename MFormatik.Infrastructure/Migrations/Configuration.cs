@@ -3,14 +3,14 @@
     using MFormatik.Infrastructure.Data;
     using System.Data.Entity.Migrations;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<MFormatik.Infrastructure.MFormatikContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<MFormatikContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(MFormatik.Infrastructure.MFormatikContext context)
+        protected override void Seed(MFormatikContext context)
         {
             context.Products.AddOrUpdate(SeedData.GetProducts().ToArray());
 

@@ -20,22 +20,13 @@ namespace MFormatik.Infrastructure
 
             ProductRepository = new ProductRepository(_contextFactory);
             ClientRepository = new ClientRepository(_contextFactory);
-
-
-
-
+            OrderRepository = new OrderRepository(_contextFactory);
         }
 
 
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
+        public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
 
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
+        public void Dispose() => _context.Dispose();
 
         public async Task<bool> IsCanConnect()
         {

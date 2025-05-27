@@ -8,7 +8,7 @@ namespace MFormatik.Core.Contracts
         Task<IEnumerable<Product>> GetAllProductsAsync();
 
         Task<IEnumerable<Product>> SearchProductsAsync(string searchItem);
-        Task<IEnumerable<Product>> FilterProductsAsync(Expression expression);
+        Task<IEnumerable<Product>> FilterProductsAsync(Expression<Func<Product, bool>> predicate);
 
         Task<string> AddProductAsync(Product product);
         Task<string> UpdateProductAsync(Product product);
