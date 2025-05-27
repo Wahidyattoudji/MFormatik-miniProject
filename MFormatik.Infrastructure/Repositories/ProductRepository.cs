@@ -1,45 +1,34 @@
 ﻿using HolcimTC.Data.Repositories;
 using MFormatik.Core.Contracts;
 using MFormatik.Core.Models;
-using System.Linq.Expressions;
+using System.Data.Entity;
+using VisaBOT.Core.Extentions;
 
 namespace MFormatik.Infrastructure.Repositories
 {
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
+        private readonly IDbContextFactory<MFormatikContext> _contextFactory;
+        private readonly MFormatikContext _context;
+
         public ProductRepository(IDbContextFactory<MFormatikContext> contextFactory) : base(contextFactory)
         {
-
+            _contextFactory = contextFactory;
+            _context = _contextFactory.CreateDbContext();
         }
 
-        public Task<string> AddProductAsync(Product product)
+        public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.Products.AsNoTracking().ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                ex.LogError();
+                return new List<Product>();
+            }
         }
 
-        public Task<string> DeleteProductAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Product>> FilterProductsAsync(Expression expression)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Product>> GetAllProductsAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Product>> SearchProductsAsync(string searchItem)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> UpdateProductAsync(Product product)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
