@@ -4,12 +4,11 @@ namespace HolcimTC.Core.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        IProductRepository ProductRepo { get; }
-        IClientRepository ClientRepo { get; }
-        IOrderRepository TrainerRepo { get; }
-
+        IProductRepository ProductRepository { get; }
+        IClientRepository ClientRepository { get; }
+        IOrderRepository OrderRepository { get; }
 
         Task<bool> IsCanConnect();
-        Task<int> SaveChangesAsync();
+        Task SaveChangesAsync();
     }
 }
