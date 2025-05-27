@@ -1,33 +1,33 @@
 ﻿using MFormatik.Core.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Data.Entity.ModelConfiguration;
 
 namespace MFormatik.Infrastructure.Data.Config
 {
-    public class ClientConfig : IEntityTypeConfiguration<Client>
+    public class ClientConfig : EntityTypeConfiguration<Client>
     {
-        public void Configure(EntityTypeBuilder<Client> builder)
+        public ClientConfig()
         {
-            builder.ToTable("Client", "dbo");
+            ToTable("Client", "dbo");
 
             // Primary key
-            builder.HasKey(p => p.Id);
-            builder.Property(p => p.Id)
-                .ValueGeneratedOnAdd()
+            HasKey(p => p.Id);
+            Property(p => p.Id)
+                .HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)
                 .HasColumnName("ClientId");
 
             // Required properties
-            builder.Property(p => p.FirstName).HasMaxLength(80).HasColumnType("VARCHAR").IsRequired();
-            builder.Property(p => p.LastName).HasMaxLength(60).HasColumnType("VARCHAR").IsRequired();
+            Property(p => p.FirstName)
+                .HasMaxLength(80)
+                .IsRequired()
+                .HasColumnType("VARCHAR");
 
-            builder.Property(c => c.Email).HasMaxLength(100);
+            Property(p => p.LastName)
+                .HasMaxLength(60)
+                .IsRequired()
+                .HasColumnType("VARCHAR");
 
-
-            // Additional configurations
-            builder.Property(p => p.Email)
-                .HasConversion(
-                    v => v.ToLowerInvariant(), // Normalize emails to lowercase
-                    v => v);
+            Property(c => c.Email)
+                .HasMaxLength(100);
         }
     }
 }

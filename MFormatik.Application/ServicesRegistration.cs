@@ -4,7 +4,7 @@ namespace MFormatik.Application
 {
     public static class ServicesRegistration
     {
-        public static void AddApplication(this IServiceCollection services)
+        public static void AddApplicationLayer(this IServiceCollection services)
         {
             // TODO: register app services
         }

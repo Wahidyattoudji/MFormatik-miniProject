@@ -1,33 +1,39 @@
 ﻿using MFormatik.Core.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.ModelConfiguration;
 
 namespace MFormatik.Infrastructure.Data.Config
 {
-    public class OrderConfig : IEntityTypeConfiguration<Order>
+    public class OrderConfig : EntityTypeConfiguration<Order>
     {
-        public void Configure(EntityTypeBuilder<Order> builder)
+        public OrderConfig()
         {
-            builder.ToTable("Order", "dbo");
+            ToTable("Order", "dbo");
 
             // Primary key
-            builder.HasKey(p => p.Id);
-            builder.Property(p => p.Id)
-                .ValueGeneratedOnAdd()
+            HasKey(p => p.Id);
+            Property(p => p.Id)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("OrdertId");
 
-            builder.Property(o => o.OrderDate).IsRequired();
-            builder.Property(o => o.Total).HasColumnType("decimal(18,2)");
-            builder.Property(o => o.TotalNet).HasColumnType("decimal(18,2)");
-            builder.Property(o => o.DiscountRate).HasColumnType("decimal(5,2)");
+            // Properties
+            Property(o => o.OrderDate)
+                .IsRequired();
+
+            Property(o => o.Total)
+                .HasPrecision(18, 2);
+
+            Property(o => o.TotalNet)
+                .HasPrecision(18, 2);
+
+            Property(o => o.DiscountRate)
+                .HasPrecision(5, 2);
 
             // Foreign key relationship with Client
-            builder.HasOne(o => o.Client)
-                   .WithMany(c => c.Orders)
-                   .HasForeignKey(o => o.ClientId)
-                   .HasConstraintName("Order_ClientId");
+            HasRequired(o => o.Client)
+                .WithMany(c => c.Orders)
+                .HasForeignKey(o => o.ClientId)
+                .WillCascadeOnDelete(false);
         }
     }
-
-
 }

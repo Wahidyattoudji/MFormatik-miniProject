@@ -1,8 +1,8 @@
-﻿using MFormatik.Helpers;
+﻿using MFormatik.Application;
 using MFormatik.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using System.Diagnostics;
+using System.Configuration;
 using System.Windows;
 
 namespace MFormatik;
@@ -27,39 +27,21 @@ public partial class App : System.Windows.Application
         ServiceProvider = serviceCollection.BuildServiceProvider();
 
         var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-
-        if (mainWindow != null)
-        {
-            Debug.WriteLine("Showing MainWindow");
-            mainWindow.Show();
-        }
+        mainWindow?.Show();
         base.OnStartup(e);
     }
 
     public static void ConfigureServices(IServiceCollection services)
     {
-        AppSettingsManager appSettingsManager = new AppSettingsManager("appsettings.json");
-        var connectionString = appSettingsManager.GetSetting("ConnectionStrings", "DefaultConnection");
-
+        var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
         services.AddInfrastructure(connectionString!);
-        //services.AddApplicationLayer();
+        services.AddApplicationLayer();
         services.AddLogging();
 
 
         //services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<MainWindow>();
-
-        //services.AddSingleton<INavigationService>(provider =>
-        //{
-        //    return new NavigationService(new System.Windows.Controls.Frame());
-        //});
-        //services.AddSingleton<ISettingNavigationService>(provider =>
-        //{
-        //    return new SettingNavigationService(new System.Windows.Controls.Frame());
-        //});
-
-
 
         // Singlton Pages 
         // services.AddSingleton<DashboardPage>();

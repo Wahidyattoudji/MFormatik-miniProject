@@ -1,42 +1,44 @@
 ﻿using MFormatik.Core.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.ModelConfiguration;
 
 namespace MFormatik.Infrastructure.Data.Config
 {
-    public class OrderItemConfig : IEntityTypeConfiguration<OrderItem>
+    public class OrderItemConfig : EntityTypeConfiguration<OrderItem>
     {
-        public void Configure(EntityTypeBuilder<OrderItem> builder)
+        public OrderItemConfig()
         {
-            builder.ToTable("OrderItem", "dbo");
+            ToTable("OrderItem", "dbo");
 
             // Primary key
-            builder.HasKey(p => p.Id);
-            builder.Property(p => p.Id)
-                .ValueGeneratedOnAdd()
+            HasKey(p => p.Id);
+            Property(p => p.Id)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("OrderItemId");
 
-            builder.Property(oi => oi.Quantity).IsRequired();
-            builder.Property(oi => oi.UnitPrice)
-                   .HasColumnType("decimal(18,2)")
-                   .IsRequired();
+            Property(oi => oi.Quantity)
+                .IsRequired();
 
-            builder.Property(oi => oi.DiscountRate).HasColumnType("decimal(5,2)");
+            Property(oi => oi.UnitPrice)
+                .HasPrecision(18, 2)
+                .IsRequired();
 
-            builder.Property(oi => oi.Position).IsRequired();
+            Property(oi => oi.DiscountRate)
+                .HasPrecision(5, 2);
 
-            // 1 - N 
-            builder.HasOne(oi => oi.Order)
-                   .WithMany(o => o.OrderItems)
-                   .HasForeignKey(oi => oi.OrderId)
-                   .HasConstraintName("OrderItem_ClientId");
-            // 1 - N 
-            builder.HasOne(oi => oi.Product)
-                   .WithMany(p => p.OrderItems)
-                   .HasForeignKey(oi => oi.ProductId)
-                   .HasConstraintName("OrderItem_ProductId");
+            Property(oi => oi.Position)
+                .IsRequired();
+
+            // Relationships (1 - N)
+            HasRequired(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId)
+                .WillCascadeOnDelete(false);
+
+            HasRequired(oi => oi.Product)
+                .WithMany(p => p.OrderItems)
+                .HasForeignKey(oi => oi.ProductId)
+                .WillCascadeOnDelete(false);
         }
     }
-
-
 }

@@ -1,7 +1,4 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 
 namespace MFormatik.Infrastructure
 {
@@ -9,9 +6,13 @@ namespace MFormatik.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContextFactory<MFormatikContext>(options =>
-                options.UseSqlServer(connectionString)
-                .LogTo(message => Trace.WriteLine(message), LogLevel.Information));
+            // i used to work with this in ef Core
+            //services.AddDbContextFactory<MFormatikContext>(options =>
+            //    options.UseSqlServer(connectionString)
+            //    .LogTo(message => Trace.WriteLine(message), LogLevel.Information));
+
+            services.AddTransient<MFormatikContext>(sp =>
+                        new MFormatikContext(connectionString));
 
             // Register repositories
             // services.AddScoped<IFormationRepository, FormationRepository>();

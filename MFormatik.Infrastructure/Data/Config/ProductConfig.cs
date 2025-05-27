@@ -1,28 +1,28 @@
 ﻿using MFormatik.Core.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.ModelConfiguration;
 
 namespace MFormatik.Infrastructure.Data.Config
 {
-    public class ProductConfig : IEntityTypeConfiguration<Product>
+    public class ProductConfig : EntityTypeConfiguration<Product>
     {
-        public void Configure(EntityTypeBuilder<Product> builder)
+        public ProductConfig()
         {
-            builder.ToTable("Product", "dbo");
+            ToTable("Product", "dbo");
 
             // Primary key
-            builder.HasKey(p => p.Id);
-            builder.Property(p => p.Id)
-                .ValueGeneratedOnAdd()
+            HasKey(p => p.Id);
+            Property(p => p.Id)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("ProductId");
 
-            builder.Property(p => p.Name).IsRequired().HasMaxLength(100);
+            Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(100);
 
-            builder.Property(p => p.UnitPrice)
-                   .HasColumnType("decimal(18,2)")
-                   .IsRequired();
+            Property(p => p.UnitPrice)
+                .HasPrecision(18, 2)
+                .IsRequired();
         }
     }
-
-
 }
