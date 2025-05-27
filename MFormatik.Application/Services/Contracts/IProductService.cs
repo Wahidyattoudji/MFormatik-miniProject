@@ -5,10 +5,9 @@ namespace MFormatik.Application.Services.Contracts
 {
     public interface IProductService
     {
-        Task CreateProductAsync(Product product);
-        Task UpdateProductAsync(Product product);
-        Task DeleteProductAsync(Product product);
-
+        //Task CreateProductAsync(Product product);
+        //Task UpdateProductAsync(Product product);
+        //Task DeleteProductAsync(Product product);
         Task<ObservableCollection<Product>> GetAllProductsAsync();
     }
 }

@@ -10,5 +10,8 @@ namespace MFormatik.Application.Services.Contracts
         Task DeleteOrderAsync(Order order);
 
         Task<ObservableCollection<Order>> GetAllOrdersAsync();
+        Task<ObservableCollection<Order>> SearchOrdersAsync(string searchItem);
+        Task<ObservableCollection<Order>> FilterOrdersAsync(Func<Order, bool> predicate);
+        Task<ObservableCollection<Order>> GetOrdersByClientIdAsync(int clientId);
     }
 }
