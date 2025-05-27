@@ -1,22 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MFormatik.Application\MFormatik.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.36">
       <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.36">
       <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
   </ItemGroup>
 
   <PropertyGroup>
