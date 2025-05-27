@@ -1,4 +1,6 @@
 namespace MFormatik.Infrastructure.Repositories
 {
-    internal class RepositoriesPlaceholder { }
+	public class Order : BaseRepository<Order>
+	{
+	}
 }

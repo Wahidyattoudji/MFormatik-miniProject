@@ -7,6 +7,11 @@ namespace MFormatik.Infrastructure
 {
     public class MFormatikContext : DbContext
     {
+        public MFormatikContext() : base("DefaultConnection")
+        {
+
+        }
+
         public MFormatikContext(string connectionString)
             : base(connectionString)
         {

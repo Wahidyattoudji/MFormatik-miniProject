@@ -16,7 +16,7 @@ namespace MFormatik.Infrastructure.Data
             };
         }
 
-        public static List<Product> GetProductSeedData()
+        public static List<Product> GetProducts()
         {
             return new List<Product>
             {
@@ -28,7 +28,7 @@ namespace MFormatik.Infrastructure.Data
             };
         }
 
-        public static List<Order> GetOrderSeedData()
+        public static List<Order> GetOrders()
         {
             return new List<Order>
             {
@@ -40,7 +40,7 @@ namespace MFormatik.Infrastructure.Data
             };
         }
 
-        public static List<OrderItem> GetOrderItemSeedData()
+        public static List<OrderItem> GetOrderItems()
         {
             return new List<OrderItem>
             {

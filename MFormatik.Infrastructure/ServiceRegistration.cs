@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MFormatik.Infrastructure
 {
-    public static class ServiceRegistration
+    public static partial class ServiceRegistration
     {
         public static void AddInfrastructure(this IServiceCollection services, string connectionString)
         {
@@ -11,8 +11,8 @@ namespace MFormatik.Infrastructure
             //    options.UseSqlServer(connectionString)
             //    .LogTo(message => Trace.WriteLine(message), LogLevel.Information));
 
-            services.AddTransient<MFormatikContext>(sp =>
-                        new MFormatikContext(connectionString));
+            services.AddScoped<IDbContextFactory<MFormatikContext>>(provider =>
+                new DbContextFactory<MFormatikContext>(connectionString));
 
             // Register repositories
             // services.AddScoped<IFormationRepository, FormationRepository>();
