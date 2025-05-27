@@ -11,7 +11,7 @@ namespace MFormatik.Core.Extensions
             return new ClientDTO
             {
                 Id = client.Id,
-                FullName = $"{client.FirstName} {client.LastName}";
+                FullName = $"{client.FirstName} {client.LastName}"
             };
         }
 

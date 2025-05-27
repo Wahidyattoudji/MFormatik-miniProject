@@ -1,6 +1,7 @@
 ﻿using System.Windows;
+using MessageBox = System.Windows.MessageBox;
 
-namespace HolcimTC.Application.Helpers
+namespace MFormatik.Helpers
 {
     public static class MsgHelper
     {
