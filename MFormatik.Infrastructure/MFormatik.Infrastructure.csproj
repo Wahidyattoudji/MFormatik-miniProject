@@ -16,4 +16,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MFormatik.Core\MFormatik.Core.csproj" />
+  </ItemGroup>
+
 </Project>
