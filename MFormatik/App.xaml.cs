@@ -1,5 +1,6 @@
 ﻿using MFormatik.Application;
 using MFormatik.Infrastructure;
+using MFormatik.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Configuration;
@@ -37,10 +38,9 @@ public partial class App : System.Windows.Application
 
         services.AddInfrastructure(connectionString!);
         services.AddApplicationLayer();
-        services.AddLogging();
 
 
-        //services.AddSingleton<MainWindowViewModel>();
+        services.AddSingleton<MainWindowVM>();
         services.AddSingleton<MainWindow>();
 
         // Singlton Pages 
