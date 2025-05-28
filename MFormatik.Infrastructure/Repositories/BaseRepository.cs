@@ -1,4 +1,5 @@
 ﻿using MFormatik.Core.Contracts;
+using MFormatik.Core.DTOs;
 using MFormatik.Infrastructure;
 using System.Data.Entity;
 using VisaBOT.Core.Extentions;
@@ -13,7 +14,8 @@ namespace HolcimTC.Data.Repositories
         {
             _dbContextFactory = dbContextFactory;
         }
-        public async Task<string> AddAsync(T entity)
+
+        public async Task<Result> AddAsync(T entity)
         {
             try
             {
@@ -22,16 +24,16 @@ namespace HolcimTC.Data.Repositories
                     context.Set<T>().Add(entity);
                     await context.SaveChangesAsync();
                 }
-                return "1";
+                return Result.Success();
             }
             catch (Exception ex)
             {
                 ex.LogError();
-                return ex.InnerException?.Message ?? ex.Message;
+                return Result.Failure(ex.InnerException?.Message ?? ex.Message);
             }
         }
 
-        public async Task<string> EditAsync(T entity)
+        public async Task<Result> EditAsync(T entity)
         {
             try
             {
@@ -41,16 +43,16 @@ namespace HolcimTC.Data.Repositories
                     context.Entry(entity).State = EntityState.Modified;
                     await context.SaveChangesAsync();
                 }
-                return "1";
+                return Result.Success();
             }
             catch (Exception ex)
             {
                 ex.LogError();
-                return ex.InnerException?.Message ?? ex.Message;
+                return Result.Failure(ex.InnerException?.Message ?? ex.Message);
             }
         }
 
-        public async Task<string> DeleteAsync(int id)
+        public async Task<Result> DeleteAsync(int id)
         {
             try
             {
@@ -58,17 +60,17 @@ namespace HolcimTC.Data.Repositories
                 {
                     var entity = await context.Set<T>().FindAsync(id);
                     if (entity == null)
-                        return "Entity not found";
+                        return Result.Failure("Entity Not Found");
 
                     context.Set<T>().Remove(entity);
                     await context.SaveChangesAsync();
                 }
-                return "1";
+                return Result.Success();
             }
             catch (Exception ex)
             {
                 ex.LogError();
-                return ex.InnerException?.Message ?? ex.Message;
+                return Result.Failure(ex.InnerException?.Message ?? ex.Message);
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace MFormatik.Core.Contracts
+﻿using MFormatik.Core.DTOs;
+
+namespace MFormatik.Core.Contracts
 {
     public interface IBaseRepository<T> where T : class
     {
@@ -9,8 +11,8 @@
         //Task<IEnumerable<T>> FindByFunctionAsync(Expression<Func<T, bool>> predicate);
 
         // Write
-        Task<string> AddAsync(T entity);
-        Task<string> EditAsync(T entity);
-        Task<string> DeleteAsync(int id);
+        Task<Result> AddAsync(T entity);
+        Task<Result> EditAsync(T entity);
+        Task<Result> DeleteAsync(int id);
     }
 }

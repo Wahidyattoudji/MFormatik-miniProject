@@ -1,4 +1,5 @@
-﻿using MFormatik.Core.Models;
+﻿using MFormatik.Core.DTOs;
+using MFormatik.Core.Models;
 using System.Collections.ObjectModel;
 
 namespace MFormatik.Application.Services.Contracts
@@ -9,6 +10,6 @@ namespace MFormatik.Application.Services.Contracts
         //Task UpdateClientAsync(Client client);
         //Task DeleteClientAsync(Client client);
         Task<ObservableCollection<Client>> GetAllClientsAsync();
-        Task<ObservableCollection<Client>> GetAllClientsASDtoAsync();
+        Task<ObservableCollection<ClientDTO>> GetAllClientsASDtoAsync();
     }
 }
