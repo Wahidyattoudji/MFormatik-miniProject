@@ -1,12 +1,97 @@
-﻿<Window x:Class="MFormatik.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MFormatik"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+﻿<Window
+    x:Class="MFormatik.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MFormatik"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:MFormatik.ViewModels"
+    Title="MainWindow"
+    Height="750"
+    MinWidth="1300"
+    MinHeight="750"
+    d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowVM}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <!--  Left side  -->
+        <Border Background="WhiteSmoke" CornerRadius="8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="80" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <!--  Logo  -->
+                <StackPanel
+                    Margin="0,28,0,0"
+                    VerticalAlignment="Center"
+                    Orientation="Vertical">
+                    <Border
+                        Width="100"
+                        Height="100"
+                        Margin="0,0,0,10"
+                        HorizontalAlignment="Center"
+                        CornerRadius="20">
+                        <Border.Background>
+                            <ImageBrush ImageSource="/Assets/Logo.png" Stretch="UniformToFill" />
+                        </Border.Background>
+                    </Border>
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Foreground="Black"
+                        Text="MFormatik" />
+                    <TextBlock
+                        Width="170"
+                        Margin="0,4,0,0"
+                        HorizontalAlignment="Center"
+                        FontSize="16"
+                        FontWeight="Regular"
+                        Foreground="Gray"
+                        Text="Creativity Never Ends"
+                        TextAlignment="Center"
+                        TextWrapping="WrapWithOverflow" />
+                </StackPanel>
 
+                <!--  Menu Items  -->
+                <StackPanel Grid.Row="2">
+                    <RadioButton
+                        Command="{Binding NavigateToHomeCommand}"
+                        Content="Accueil"
+                        IsChecked="{Binding IsHomeChecked}"
+                        Style="{DynamicResource SideMenu.RadioBtn.Normal}"
+                        Tag="{DynamicResource home}" />
+                    <RadioButton
+                        Margin="0,5,0,5"
+                        Command="{Binding NavigateToOrdersCommand}"
+                        Content="Commandes"
+                        Style="{DynamicResource SideMenu.RadioBtn.Normal}"
+                        Tag="{DynamicResource payment}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+        <!--  Frame  -->
+        <Border Grid.Column="1" CornerRadius="8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <!--  Navigation Frame  -->
+                <Border
+                    Grid.Row="1"
+                    Margin="5,0,5,0"
+                    Background="Transparent"
+                    CornerRadius="10">
+                    <Frame x:Name="PagesNavigation" NavigationUIVisibility="Hidden" />
+                </Border>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

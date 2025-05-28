@@ -1,6 +1,7 @@
 ﻿using MFormatik.Application;
 using MFormatik.Infrastructure;
 using MFormatik.ViewModels;
+using MFormatik.Views.Pages;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Configuration;
@@ -39,13 +40,12 @@ public partial class App : System.Windows.Application
         services.AddInfrastructure(connectionString!);
         services.AddApplicationLayer();
 
-
         services.AddSingleton<MainWindowVM>();
         services.AddSingleton<MainWindow>();
 
         // Singlton Pages 
-        // services.AddSingleton<DashboardPage>();
-
+        services.AddSingleton<HomePage>();
+        services.AddSingleton<OrdersPage>();
 
         // Add windows
         // services.AddTransient<AddFormationVM>();
@@ -54,7 +54,6 @@ public partial class App : System.Windows.Application
         // Adding Navigation ViewModels As singlton (Manualy Rload UI) 
         // services.AddSingleton<FormationVM>();
     }
-
     #region Error hundling With Serilog
     private void ConfigureLogging()
     {

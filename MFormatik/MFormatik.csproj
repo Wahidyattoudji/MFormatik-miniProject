@@ -2,10 +2,14 @@
 
   <ItemGroup>
     <None Remove="app.config" />
+    <None Remove="Assets\Logo.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="app.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
