@@ -14,5 +14,6 @@ public partial class MainWindow : Window
         InitializeComponent();
         navigationService.SetNavigationFrame(PagesNavigation);
         DataContext = mainWindowVM;
+        mainWindowVM.NavigateToHomeCommand.Execute(null);
     }
 }

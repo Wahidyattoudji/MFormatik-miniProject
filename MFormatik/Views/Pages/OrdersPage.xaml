@@ -10,5 +10,5 @@
     d:DesignWidth="1000"
     mc:Ignorable="d">
 
-    <Grid />
+    <Grid  Background="Aquamarine"/>
 </Page>

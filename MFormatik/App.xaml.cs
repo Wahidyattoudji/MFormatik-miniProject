@@ -1,11 +1,13 @@
 ﻿using MFormatik.Application;
 using MFormatik.Infrastructure;
+using MFormatik.Services.Abstracts;
 using MFormatik.ViewModels;
 using MFormatik.Views.Pages;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Configuration;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace MFormatik;
 
@@ -39,6 +41,10 @@ public partial class App : System.Windows.Application
 
         services.AddInfrastructure(connectionString!);
         services.AddApplicationLayer();
+
+        services.AddSingleton<INavigationService>(provider =>
+                 new Services.NavigationService(new Frame())
+        );
 
         services.AddSingleton<MainWindowVM>();
         services.AddSingleton<MainWindow>();

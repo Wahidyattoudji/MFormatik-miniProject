@@ -1467,17 +1467,17 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="txtName" Property="Foreground" Value="{DynamicResource Holcim.GradientGreen}" />
-                            <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource Holcim.GradientGreen}" />
-                            <Setter TargetName="Indicator" Property="Fill" Value="{DynamicResource Holcim.GradientGreen}" />
+                            <Setter TargetName="txtName" Property="Foreground" Value="Black" />
+                            <Setter TargetName="Icon" Property="Fill" Value="Black" />
+                            <Setter TargetName="Indicator" Property="Fill" Value="#2A364D" />
                             <Setter TargetName="Indicator" Property="Height" Value="20" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Icon" Property="Fill" Value="#D1D5DB" />
-                            <Setter TargetName="Indicator" Property="Fill" Value="{DynamicResource Holcim.GradientGreen}" />
+                            <Setter TargetName="Icon" Property="Fill" Value="Black" />
+                            <Setter TargetName="Indicator" Property="Fill" Value="#2A364D" />
                             <Setter TargetName="Indicator" Property="Height" Value="20" />
-                            <Setter TargetName="btnSelected" Property="Background" Value="#2A364D" />
-                            <Setter TargetName="txtName" Property="Foreground" Value="#D1D5DB" />
+                            <Setter TargetName="btnSelected" Property="Background" Value="#2184C2" />
+                            <Setter TargetName="txtName" Property="Foreground" Value="Black" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
