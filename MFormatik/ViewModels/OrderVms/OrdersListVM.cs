@@ -2,6 +2,10 @@
 using MFormatik.Application.Helpers;
 using MFormatik.Application.MediatorService;
 using MFormatik.Core.Models;
+using MFormatik.Helpers;
+using MFormatik.Services.Abstracts;
+using MFormatik.Views.OrderViews;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -63,6 +67,10 @@ namespace MFormatik.ViewModels.OrderVms
         #endregion
 
         #region Commands
+        public ICommand OpenAddOrederCommand { get; }
+        public ICommand PrintOrderCommand { get; }
+        public ICommand DeleteOrderCommand { get; }
+
         public ICommand SearchCommand { get; }
         public ICommand ReloadCommand { get; }
         #endregion
@@ -94,8 +102,11 @@ namespace MFormatik.ViewModels.OrderVms
         {
             _mediator = mediator;
 
-            SearchCommand = new RelayCommand(() => SearchOrder());
-            ReloadCommand = new RelayCommand(() => Reload());
+            OpenAddOrederCommand = new RelayCommand(OpenAddOrderWindow);
+            PrintOrderCommand = new RelayCommand(PrintOrder);
+            DeleteOrderCommand = new RelayCommand(() => DeleteOrder());
+            SearchCommand = new RelayCommand(SearchOrder);
+            ReloadCommand = new RelayCommand(Reload);
             #region Search Command Initial
             _searchTimer = new DispatcherTimer
             {
@@ -105,6 +116,40 @@ namespace MFormatik.ViewModels.OrderVms
             #endregion
             _mediator.Subscribe("ReloadOrdersListData", OnReloadData);
             _initializeTask = new Lazy<Task>(() => LoadDataAsync());
+        }
+
+        private async Task DeleteOrder()
+        {
+            if (SelectedOrder == null)
+            {
+                MsgHelper.ShowNoSelectionError("Commande");
+            }
+            if (MsgHelper.DeleteConfirmation("Commande"))
+            {
+                await _mediator.OrderService.DeleteOrderAsync(SelectedOrder);
+                Reload();
+            }
+        }
+
+        private void PrintOrder()
+        {
+            if (SelectedOrder == null)
+            {
+                MsgHelper.ShowNoSelectionError("Commande");
+                return;
+            }
+            var printer = App.ServiceProvider.GetRequiredService<IOrderPrinter>();
+            printer.Print(SelectedOrder);
+        }
+
+        private void OpenAddOrderWindow()
+        {
+            bool isWindowOpen = App.Current.Windows.OfType<AddOrderView>().Any();
+            if (!isWindowOpen)
+            {
+                var addOrderView = App.ServiceProvider.GetRequiredService<AddOrderView>();
+                addOrderView.Show();
+            }
         }
 
         ~OrdersListVM()

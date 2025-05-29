@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:MFormatik.Views.OrderViews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ordervms="clr-namespace:MFormatik.ViewModels.OrderVms"
+    x:Name="OrderListView"
     d:DataContext="{d:DesignInstance Type=ordervms:OrdersListVM}"
     d:DesignHeight="700"
     d:DesignWidth="1000"
@@ -13,7 +14,7 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="WhiteSmoke">
         <!--  Datagrid Status  -->
         <Border
             HorizontalAlignment="Center"
@@ -92,21 +93,11 @@
                         <Button
                             Height="36"
                             Margin="0,0,8,0"
-                            Command="{Binding}"
+                            Command="{Binding OpenAddOrederCommand}"
                             Content="Nouvell Command"
                             FlowDirection="RightToLeft"
                             Style="{StaticResource Icon.Text.blue}"
                             Tag="{StaticResource Add.Account}" />
-                        <!--  Edit  -->
-                        <Button
-                            Height="36"
-                            Margin="0,0,8,0"
-                            Command="{Binding OpenUpdateProfileCommand}"
-                            Content="Edit"
-                            FlowDirection="RightToLeft"
-                            Style="{DynamicResource Icon.Text.Green}"
-                            Tag="{DynamicResource Edit}" />
-
                     </StackPanel>
                     <!--  Search  -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -175,7 +166,7 @@
                                                 Height="36"
                                                 Margin="0,0,5,0"
                                                 Padding="0,0,0,0"
-                                                Command="{Binding DataContext.StartCommand, ElementName=ProfileView}"
+                                                Command="{Binding DataContext.PrintOrderCommand, ElementName=OrderListView}"
                                                 CommandParameter="{Binding}"
                                                 FlowDirection="RightToLeft"
                                                 Style="{StaticResource Icon.Text.blue}"
@@ -185,7 +176,7 @@
                                                 Height="36"
                                                 Margin="0,0,0,0"
                                                 Padding="0"
-                                                Command="{Binding DataContext.DeleteCommand, ElementName=ProfileView}"
+                                                Command="{Binding DataContext.DeleteOrderCommand, ElementName=OrderListView}"
                                                 CommandParameter="{Binding}"
                                                 FlowDirection="RightToLeft"
                                                 Style="{StaticResource Icon.Text.Red}"

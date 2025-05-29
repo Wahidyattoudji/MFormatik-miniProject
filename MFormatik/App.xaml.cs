@@ -1,8 +1,10 @@
 ﻿using MFormatik.Application;
 using MFormatik.Infrastructure;
+using MFormatik.Services;
 using MFormatik.Services.Abstracts;
 using MFormatik.ViewModels;
 using MFormatik.ViewModels.OrderVms;
+using MFormatik.Views.OrderViews;
 using MFormatik.Views.Pages;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -56,10 +58,15 @@ public partial class App : System.Windows.Application
 
         // 
         services.AddTransient<AddOrderVM>();
+        services.AddTransient<AddOrderView>();
+
         services.AddSingleton<OrdersListVM>();
 
         // Registering ViewModels for OrdersPage
         services.AddSingleton<OrdersPageViewModel>();
+
+        //services
+        services.AddTransient<IOrderPrinter, OrderPrinter>();
     }
     #region Error hundling With Serilog
     private void ConfigureLogging()
