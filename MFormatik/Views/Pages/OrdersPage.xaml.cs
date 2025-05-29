@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using MFormatik.ViewModels;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MFormatik.Views.Pages
 {
@@ -20,9 +8,12 @@ namespace MFormatik.Views.Pages
     /// </summary>
     public partial class OrdersPage : Page
     {
-        public OrdersPage()
+        public OrdersPage(OrdersPageViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
+            viewModel.NavigateToAddOrder();
+            Loaded += (s, e) => viewModel.EnsureLoadOrders(); // Lazy load orders when the page is loaded
         }
     }
 }

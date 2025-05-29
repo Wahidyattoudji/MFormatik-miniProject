@@ -2,6 +2,7 @@
 using MFormatik.Infrastructure;
 using MFormatik.Services.Abstracts;
 using MFormatik.ViewModels;
+using MFormatik.ViewModels.OrderVms;
 using MFormatik.Views.Pages;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -53,12 +54,12 @@ public partial class App : System.Windows.Application
         services.AddSingleton<HomePage>();
         services.AddSingleton<OrdersPage>();
 
-        // Add windows
-        // services.AddTransient<AddFormationVM>();
+        // 
+        services.AddTransient<AddOrderVM>();
+        services.AddSingleton<OrdersListVM>();
 
-
-        // Adding Navigation ViewModels As singlton (Manualy Rload UI) 
-        // services.AddSingleton<FormationVM>();
+        // Registering ViewModels for OrdersPage
+        services.AddSingleton<OrdersPageViewModel>();
     }
     #region Error hundling With Serilog
     private void ConfigureLogging()

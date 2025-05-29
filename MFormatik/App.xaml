@@ -8,6 +8,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Assets/MyMaterialStyle.xaml" />
                 <ResourceDictionary Source="/Assets/Icons.xaml" />
+                <ResourceDictionary Source="/Assets/NavigationButtons.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="FrameworkElement">
                 <Setter Property="UseLayoutRounding" Value="True" />
