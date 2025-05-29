@@ -54,7 +54,7 @@ namespace MFormatik.ViewModels
         {
             if (CurrentViewModel is OrdersListVM ordersListVM)
             {
-                //   ordersListVM.EnsureDataLoadedAsync();
+                ordersListVM.EnsureDataLoadedAsync();
             }
         }
 

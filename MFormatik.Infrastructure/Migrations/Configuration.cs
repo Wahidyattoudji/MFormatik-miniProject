@@ -12,12 +12,12 @@
 
         protected override void Seed(MFormatikContext context)
         {
-            context.Products.AddOrUpdate(SeedData.GetProducts().ToArray());
+            context.Products.AddOrUpdate(p => p.Id, SeedData.GetProducts().ToArray());
 
-            context.Clients.AddOrUpdate(SeedData.GetClients().ToArray());
+            context.Clients.AddOrUpdate(p => p.Id, SeedData.GetClients().ToArray());
 
-            context.Orders.AddOrUpdate(SeedData.GetOrders().ToArray());
-            context.OrderItems.AddOrUpdate(SeedData.GetOrderItems().ToArray());
+            context.Orders.AddOrUpdate(p => p.Id, SeedData.GetOrders().ToArray());
+            context.OrderItems.AddOrUpdate(p => p.Id, SeedData.GetOrderItems().ToArray());
         }
     }
 }

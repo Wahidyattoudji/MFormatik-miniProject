@@ -1,12 +1,203 @@
-﻿<UserControl x:Class="MFormatik.Views.OrderViews.OrdersListView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MFormatik.Views.OrderViews"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="CornflowerBlue">
-            
+﻿<UserControl
+    x:Class="MFormatik.Views.OrderViews.OrdersListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MFormatik.Views.OrderViews"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ordervms="clr-namespace:MFormatik.ViewModels.OrderVms"
+    d:DataContext="{d:DesignInstance Type=ordervms:OrdersListVM}"
+    d:DesignHeight="700"
+    d:DesignWidth="1000"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <!--  Datagrid Status  -->
+        <Border
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Panel.ZIndex="1"
+            Visibility="{Binding ShowEmptyDataGridMsg, Converter={StaticResource BoolToVisConverter}}">
+            <StackPanel Width="250" Orientation="Vertical">
+                <Label
+                    HorizontalAlignment="Center"
+                    Content="Aucune donnée disponible"
+                    FontSize="18"
+                    FontWeight="DemiBold"
+                    Foreground="#333" />
+                <Separator Margin="0,0,0,10" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="15"
+                    Foreground="#666"
+                    Text="Veuillez ajouter des données pour les afficher ici"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+        <!--  Main Page  -->
+        <Border Padding="0" CornerRadius="8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <!--  Row 1  Statistics  -->
+                <StackPanel Margin="20,16,20,4" Orientation="Horizontal">
+                    <Label
+                        Content="Total Commandes :"
+                        FontSize="16"
+                        FontWeight="Regular" />
+                    <Border
+                        Height="25"
+                        Margin="0,0,20,0"
+                        Background="{StaticResource Holcim.CyanBlue}"
+                        CornerRadius="8">
+                        <TextBlock
+                            Width="auto"
+                            Padding="8,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            FontWeight="Normal"
+                            Text="{Binding TotalOrders}" />
+                    </Border>
+
+                </StackPanel>
+                <!--  Refresh button  -->
+                <Button
+                    Width="50"
+                    Height="40"
+                    Margin="0,0,25,0"
+                    Padding="8,0,8,0"
+                    HorizontalAlignment="Right"
+                    Command="{Binding ReloadCommand}"
+                    Style="{DynamicResource Icon.Text.blue}"
+                    Tag="{DynamicResource Refresh1}" />
+                <!--  Row 2 CRUD Buttons  -->
+                <Grid Grid.Row="1" Margin="0,8,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel
+                        Margin="20,0,20,0"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal">
+                        <!--  Add  -->
+                        <Button
+                            Height="36"
+                            Margin="0,0,8,0"
+                            Command="{Binding}"
+                            Content="Nouvell Command"
+                            FlowDirection="RightToLeft"
+                            Style="{StaticResource Icon.Text.blue}"
+                            Tag="{StaticResource Add.Account}" />
+                        <!--  Edit  -->
+                        <Button
+                            Height="36"
+                            Margin="0,0,8,0"
+                            Command="{Binding OpenUpdateProfileCommand}"
+                            Content="Edit"
+                            FlowDirection="RightToLeft"
+                            Style="{DynamicResource Icon.Text.Green}"
+                            Tag="{DynamicResource Edit}" />
+
+                    </StackPanel>
+                    <!--  Search  -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <TextBox
+                            Height="40"
+                            Margin="0,0,10,0"
+                            HorizontalAlignment="Left"
+                            Style="{StaticResource TextBox.Search}"
+                            Tag="Search..."
+                            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button
+                            Margin="0,0,30,0"
+                            Padding="1,0"
+                            Command="{Binding SearchCommand}"
+                            Style="{StaticResource Icon.Text.blue}"
+                            Tag="{StaticResource search}" />
+                    </StackPanel>
+                </Grid>
+                <!--  Row 3  DataGrid  -->
+                <Grid Grid.Row="2">
+                    <DataGrid
+                        Margin="10"
+                        Padding="4"
+                        CellStyle="{StaticResource main.DataGrid.Cell.Style}"
+                        ColumnHeaderStyle="{StaticResource main.DataGridColumnHeader.Style}"
+                        EnableColumnVirtualization="True"
+                        EnableRowVirtualization="True"
+                        ItemsSource="{Binding OrdersList, UpdateSourceTrigger=PropertyChanged}"
+                        RowStyle="{StaticResource main.DataGrid.Row.Style}"
+                        SelectedItem="{Binding SelectedOrder, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource main.DataGrid}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="auto"
+                                Binding="{Binding Client.FullName, UpdateSourceTrigger=PropertyChanged}"
+                                CellStyle="{DynamicResource main.DataGrid.Cell.Style}"
+                                Header="Client" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding OrderDate}"
+                                Header="Commande Date" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding OrderItems.Count}"
+                                Header="Total Products" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Total}"
+                                Header="Total" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding DiscountRate}"
+                                Header="Remize" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding TotalNet}"
+                                Header="TotalNet" />
+                            <DataGridTemplateColumn
+                                MinWidth="115"
+                                MaxWidth="140"
+                                Header="Start">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button
+                                                Height="36"
+                                                Margin="0,0,5,0"
+                                                Padding="0,0,0,0"
+                                                Command="{Binding DataContext.StartCommand, ElementName=ProfileView}"
+                                                CommandParameter="{Binding}"
+                                                FlowDirection="RightToLeft"
+                                                Style="{StaticResource Icon.Text.blue}"
+                                                Tag="{StaticResource Print}" />
+                                            <!--  Delete  -->
+                                            <Button
+                                                Height="36"
+                                                Margin="0,0,0,0"
+                                                Padding="0"
+                                                Command="{Binding DataContext.DeleteCommand, ElementName=ProfileView}"
+                                                CommandParameter="{Binding}"
+                                                FlowDirection="RightToLeft"
+                                                Style="{StaticResource Icon.Text.Red}"
+                                                Tag="{StaticResource Delete}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

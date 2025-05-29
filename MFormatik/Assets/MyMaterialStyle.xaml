@@ -5,7 +5,8 @@
 
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
-
+    <SolidColorBrush x:Key="VisaBOT.DarkBlue" Color="#21B3F7" />
+    
     <!--#region  Colors-->
     <!--  Material Colors  -->
     <SolidColorBrush x:Key="Material.blue" Color="#304fff" />
@@ -23,7 +24,7 @@
     <SolidColorBrush x:Key="VisaBOT.Green" Color="#FF3BD4AC" />
     <SolidColorBrush x:Key="VisaBOT.Brown" Color="#363636" />
     <SolidColorBrush x:Key="VisaBOT.Yellow" Color="#FFB5AC21" />
-    <SolidColorBrush x:Key="VisaBOT.DarkBlue" Color="#1D4370" />
+
     <SolidColorBrush x:Key="VisaBOT.Separator" Color="#dae2ea" />
     <SolidColorBrush x:Key="VisaBOT.Border" Color="#784ff2" />
     <SolidColorBrush x:Key="VisaBOT.Gray" Color="#d0bfff" />

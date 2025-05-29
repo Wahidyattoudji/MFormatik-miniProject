@@ -12,7 +12,7 @@ namespace MFormatik.Views.Pages
         {
             InitializeComponent();
             DataContext = viewModel;
-            viewModel.NavigateToAddOrder();
+            viewModel.NavigateToOrdersList();
             Loaded += (s, e) => viewModel.EnsureLoadOrders(); // Lazy load orders when the page is loaded
         }
     }

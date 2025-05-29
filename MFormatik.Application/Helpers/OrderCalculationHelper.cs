@@ -1,6 +1,6 @@
 ﻿namespace MFormatik.Application.Helpers;
 
-public static class OrderCalculationHelper
+public static partial class OrderCalculationHelper
 {
     // le montant = Prix * Quantité
     public static decimal CalculateAmount(decimal price, int quantity)
