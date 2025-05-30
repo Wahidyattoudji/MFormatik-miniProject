@@ -22,7 +22,9 @@ namespace MFormatik.Infrastructure.Repositories
         {
             try
             {
-                return await _context.Orders.AsNoTracking()
+                return await _context.Orders.Include(x => x.Client)
+                                            .Include(x => x.OrderItems)
+                                            .AsNoTracking()
                                             .ToListAsync();
             }
             catch (Exception ex)
@@ -32,13 +34,16 @@ namespace MFormatik.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<Order>> FilterOrdersAsync(Expression<Func<Order, bool>> predicate)
+        public async Task<IEnumerable<Order>> FilterOrdersAsync(Expression<Func<Order, bool>> predicate, string orderDirection)
         {
             try
             {
-                return await _context.Orders.Where(predicate)
-                                            .AsNoTracking()
-                                            .ToListAsync();
+                IQueryable<Order> query = _context.Orders
+                                        .Where(predicate)
+                                        .AsNoTracking();
+
+
+                return query;
             }
             catch (Exception ex)
             {
@@ -51,9 +56,13 @@ namespace MFormatik.Infrastructure.Repositories
         {
             try
             {
-                return await _context.Orders.Where(x => x.Id.ToString() == searchItem
+                return await _context.Orders.Include(x => x.Client)
+                                             .Where(x => x.Id.ToString() == searchItem
                                                               || x.OrderDate.ToString().Contains(searchItem)
-                                                              || x.Client.FullName.Contains(searchItem)
+                                                              || x.TotalNet.ToString().Contains(searchItem)
+                                                              || x.Total.ToString().Contains(searchItem)
+                                                              || x.Client.FirstName.Contains(searchItem)
+                                                              || x.Client.LastName.Contains(searchItem)
                                                               || x.Client.Email.Contains(searchItem)
                                                               ).AsNoTracking()
                                                               .ToListAsync();

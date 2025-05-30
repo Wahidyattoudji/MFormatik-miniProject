@@ -64,6 +64,7 @@ namespace MFormatik.ViewModels.OrderVms
                 }
             }
         }
+
         #endregion
 
         #region Commands
@@ -98,6 +99,33 @@ namespace MFormatik.ViewModels.OrderVms
         }
         #endregion
 
+        private DateTime _startDate;
+        public DateTime StartDate
+        {
+            get => _startDate;
+            set
+            {
+                if (_startDate != value)
+                {
+                    _startDate = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private DateTime _endDate;
+        public DateTime EndDate
+        {
+            get => _endDate;
+            set
+            {
+                if (_endDate != value)
+                {
+                    _endDate = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public OrdersListVM(IMediator mediator)
         {
             _mediator = mediator;
@@ -116,6 +144,10 @@ namespace MFormatik.ViewModels.OrderVms
             #endregion
             _mediator.Subscribe("ReloadOrdersListData", OnReloadData);
             _initializeTask = new Lazy<Task>(() => LoadDataAsync());
+        }
+        ~OrdersListVM()
+        {
+            _mediator.Unsubscribe("ReloadOrdersListData", OnReloadData);
         }
 
         private async Task DeleteOrder()
@@ -150,11 +182,6 @@ namespace MFormatik.ViewModels.OrderVms
                 var addOrderView = App.ServiceProvider.GetRequiredService<AddOrderView>();
                 addOrderView.Show();
             }
-        }
-
-        ~OrdersListVM()
-        {
-            _mediator.Unsubscribe("ReloadOrdersListData", OnReloadData);
         }
 
         private async void SearchOrder()

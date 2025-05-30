@@ -1,7 +1,7 @@
-﻿using MFormatik.Core.DTOs;
+﻿using MFormatik.Core.Const;
+using MFormatik.Core.DTOs;
 using MFormatik.Core.Models;
 using System.Collections.ObjectModel;
-using System.Linq.Expressions;
 
 namespace MFormatik.Application.Services.Contracts
 {
@@ -13,6 +13,6 @@ namespace MFormatik.Application.Services.Contracts
 
         Task<ObservableCollection<Order>> GetAllOrdersAsync();
         Task<ObservableCollection<Order>> SearchOrdersAsync(string searchItem);
-        Task<ObservableCollection<Order>> FilterOrdersAsync(Expression<Func<Order, bool>> predicate);
+        Task<ObservableCollection<Order>> FilterByDateAsync(DateTime startDate, DateTime endDate, string orderDirection = OrderDirection.Ascending);
     }
 }

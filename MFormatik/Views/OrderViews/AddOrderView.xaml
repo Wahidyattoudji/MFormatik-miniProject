@@ -6,8 +6,166 @@
     xmlns:local="clr-namespace:MFormatik.Views.OrderViews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="AddOrderView"
-    Width="800"
-    Height="450"
+    Width="600"
+    Height="650"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <Grid Background="DarkGreen" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <!--  Title  -->
+        <Border
+            Grid.Row="0"
+            Margin="8,0,8,10"
+            Background="Transparent"
+            BorderBrush="{StaticResource VisaBOT.DarkBlue}"
+            BorderThickness="3"
+            CornerRadius="8"
+            SnapsToDevicePixels="True">
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <Button
+                    Height="38"
+                    IsEnabled="False"
+                    Style="{DynamicResource Icon.Only.UniformToFill}"
+                    Tag="{DynamicResource Add.DataBase}" />
+                <TextBlock
+                    Padding="20,18"
+                    FontSize="28"
+                    FontWeight="Bold"
+                    Foreground="{StaticResource VisaBOT.DarkBlue}"
+                    Text="Nouvelle Commande" />
+            </StackPanel>
+        </Border>
+        <!--  Select a Profile  -->
+        <Border
+            Grid.Row="1"
+            Margin="10"
+            Background="White"
+            BorderBrush="{DynamicResource VisaBOT.DarkBlue}"
+            BorderThickness="1"
+            CornerRadius="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <!--  title : Select a livness  -->
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="10,10,10,0"
+                    Padding="10"
+                    FontSize="18"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource VisaBOT.DarkBlue}"
+                    Text="Select un client" />
+                <ComboBox
+                    x:Name="SelectCB"
+                    Grid.Row="1"
+                    Margin="18,8,18,18"
+                    DisplayMemberPath="BlsEmail"
+                    ItemsSource="{Binding AllProfilesList}"
+                    SelectedItem="{Binding SelectedProfile}"
+                    SelectedValue="{Binding ProfileId}"
+                    SelectedValuePath="Id"
+                    Style="{DynamicResource main.ComboBox.Style}" />
+            </Grid>
+        </Border>
+        <!--  Sign Up Informations  -->
+        <Grid Grid.Row="2" Margin="8,0,8,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!--  Personal Section  -->
+            <Border
+                Grid.Column="1"
+                Margin="0,0,6,0"
+                Padding="10"
+                Background="White"
+                BorderBrush="{DynamicResource VisaBOT.DarkBlue}"
+                BorderThickness="1"
+                CornerRadius="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <!--  SubTitle  -->
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Margin="0,0,0,12"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        Foreground="{DynamicResource VisaBOT.DarkBlue}"
+                        Text="Ajoute des Produit" />
+                    <!--  username TextBox  -->
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="0,0,8,20"
+                        Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Label
+                                HorizontalAlignment="Left"
+                                Content="User Name"
+                                FontSize="14" />
+                            <Label
+                                Margin="-6,0,0,0"
+                                HorizontalAlignment="Left"
+                                Content="*"
+                                Foreground="red" />
+                        </StackPanel>
+                        <TextBox x:Name="UsernameTB" Style="{DynamicResource TextBox.Normal}">
+                            <TextBox.Text>
+                                <Binding
+                                    NotifyOnValidationError="True"
+                                    Path="Username"
+                                    UpdateSourceTrigger="PropertyChanged"
+                                    ValidatesOnDataErrors="True" />
+                            </TextBox.Text>
+                        </TextBox>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+        <!--  SignUp buttol TextBox  -->
+        <StackPanel
+            Grid.Row="4"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal">
+            <Button
+                Width="120"
+                Height="35"
+                Margin="10"
+                Command="{Binding AddLivenessCommand}"
+                Content="Valide"
+                FlowDirection="RightToLeft"
+                Style="{DynamicResource Icon.Green}"
+                Tag="{StaticResource Edit.DataBase}" />
+            <Button
+                Width="90"
+                Height="35"
+                Margin="10"
+                Background="{StaticResource Material.red}"
+                Command="{Binding CancelCommand}"
+                Content="Cancel"
+                Style="{DynamicResource Icon.Green}" />
+        </StackPanel>
+    </Grid>
 </Window>

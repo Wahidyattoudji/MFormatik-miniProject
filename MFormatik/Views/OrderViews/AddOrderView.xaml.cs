@@ -12,6 +12,7 @@ namespace MFormatik.Views.OrderViews
         {
             InitializeComponent();
             DataContext = addOrderVM;
+            Owner = App.Current.MainWindow;
         }
     }
 }

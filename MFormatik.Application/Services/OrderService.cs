@@ -3,7 +3,6 @@ using MFormatik.Application.Services.Contracts;
 using MFormatik.Core.DTOs;
 using MFormatik.Core.Models;
 using System.Collections.ObjectModel;
-using System.Linq.Expressions;
 
 namespace MFormatik.Application.Services
 {
@@ -23,10 +22,13 @@ namespace MFormatik.Application.Services
             return new ObservableCollection<Order>(orders);
         }
 
-        public async Task<ObservableCollection<Order>> FilterOrdersAsync(Expression<Func<Order, bool>> predicate)
+
+        public async Task<ObservableCollection<Order>> FilterByDateAsync(DateTime startDate, DateTime endDate, string OrderBy)
         {
-            var FilteredOrders = await _unitOfWork.OrderRepository.FilterOrdersAsync(predicate);
-            return new ObservableCollection<Order>(FilteredOrders);
+            var OrdersByDate = await _unitOfWork.OrderRepository
+                                                .FilterOrdersAsync(o => o.OrderDate >= startDate && o.OrderDate <= endDate, OrderBy);
+
+            return new ObservableCollection<Order>(OrdersByDate ?? Enumerable.Empty<Order>());
         }
 
         public async Task<ObservableCollection<Order>> SearchOrdersAsync(string searchItem)

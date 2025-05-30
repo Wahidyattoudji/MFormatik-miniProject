@@ -69,51 +69,74 @@
                     </Border>
 
                 </StackPanel>
-                <!--  Refresh button  -->
+                <!--  Add button  -->
                 <Button
-                    Width="50"
-                    Height="40"
-                    Margin="0,0,25,0"
-                    Padding="8,0,8,0"
+                    Width="200"
+                    Height="36"
+                    Margin="0,0,8,0"
                     HorizontalAlignment="Right"
-                    Command="{Binding ReloadCommand}"
-                    Style="{DynamicResource Icon.Text.blue}"
-                    Tag="{DynamicResource Refresh1}" />
+                    Command="{Binding OpenAddOrederCommand}"
+                    Content="Nouvell Command"
+                    FlowDirection="RightToLeft"
+                    Style="{StaticResource Icon.Text.blue}"
+                    Tag="{StaticResource Add.Account}" />
+
                 <!--  Row 2 CRUD Buttons  -->
                 <Grid Grid.Row="1" Margin="0,8,0,6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <StackPanel
-                        Margin="20,0,20,0"
-                        HorizontalAlignment="Left"
-                        Orientation="Horizontal">
-                        <!--  Add  -->
-                        <Button
-                            Height="36"
-                            Margin="0,0,8,0"
-                            Command="{Binding OpenAddOrederCommand}"
-                            Content="Nouvell Command"
-                            FlowDirection="RightToLeft"
-                            Style="{StaticResource Icon.Text.blue}"
-                            Tag="{StaticResource Add.Account}" />
+                    <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                        <ComboBox
+                            Name="OrderStatusComboBox"
+                            Width="180"
+                            Height="35"
+                            Margin="0,0,6,0"
+                            DisplayMemberPath="Name"
+                            ItemsSource="{Binding OrderStatuses}"
+                            SelectedItem="{Binding SelectedOrderStatus, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{StaticResource main.ComboBox.Style}"
+                            Tag="Order By" />
+                        <DatePicker
+                            Width="200"
+                            Height="35"
+                            Margin="0,0,4,0"
+                            SelectedDate="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{StaticResource Style.DatePicker}"
+                            Tag="Debit" />
+                        <DatePicker
+                            Width="200"
+                            Height="35"
+                            Margin="0,0,10,0"
+                            SelectedDate="{Binding EndDate, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{StaticResource Style.DatePicker}"
+                            Tag="Fin" />
                     </StackPanel>
                     <!--  Search  -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <TextBox
-                            Height="40"
+                            Width="250"
+                            Height="35"
                             Margin="0,0,10,0"
-                            HorizontalAlignment="Left"
+                            FontSize="12"
                             Style="{StaticResource TextBox.Search}"
                             Tag="Search..."
                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
                         <Button
-                            Margin="0,0,30,0"
+                            Height="35"
+                            Margin="0,0,5,0"
                             Padding="1,0"
                             Command="{Binding SearchCommand}"
                             Style="{StaticResource Icon.Text.blue}"
                             Tag="{StaticResource search}" />
+                        <Button
+                            Height="35"
+                            Margin="0,0,10,0"
+                            Padding="0,0,3,0"
+                            Command="{Binding ReloadCommand}"
+                            Style="{DynamicResource Icon.Text.blue}"
+                            Tag="{DynamicResource Refresh1}" />
                     </StackPanel>
                 </Grid>
                 <!--  Row 3  DataGrid  -->
