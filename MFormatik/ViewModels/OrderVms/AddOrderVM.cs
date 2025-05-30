@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using MFormatik.Application.Helpers;
 using MFormatik.Application.MediatorService;
 using MFormatik.Core.DTOs;
 using MFormatik.Core.Models;
+using MFormatik.Helpers;
 using MFormatik.ViewModels.ProductVms;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -16,7 +18,6 @@ namespace MFormatik.ViewModels.OrderVms
         private Product _selectedProduct;
         private ObservableCollection<ClientDTO> _clientsList;
         private ObservableCollection<Product> _productList;
-
 
         public ClientDTO SelectedClient
         {
@@ -78,9 +79,10 @@ namespace MFormatik.ViewModels.OrderVms
             _productList = new ObservableCollection<Product>();
             OrderItems = new ObservableCollection<OrderItem>();
 
-            SaveCommand = new RelayCommand(SaveOrder);
+            SaveCommand = new RelayCommand(() => SaveOrder());
             CancelCommand = new RelayCommand(CloseWindow);
             AddProductCommand = new RelayCommand(AddProductToOrder);
+
 
             LoadData();
             ClearData();
@@ -123,9 +125,31 @@ namespace MFormatik.ViewModels.OrderVms
             // throw new NotImplementedException();
         }
 
-        private void SaveOrder()
+        private async Task SaveOrder()
         {
-            // throw new NotImplementedException();
+            var total = OrderCalculationHelper.CalculateTotal(ProductLines.Select(pl => pl.UnitPrice));
+            var totalNet = OrderCalculationHelper.CalculateTotalNet(total, (decimal)DiscountRate);
+
+            var newOrder = new Order
+            {
+                ClientId = SelectedClient?.Id ?? 0,
+                OrderDate = DateTime.Now,
+                DiscountRate = DiscountRate ?? 0,
+                Total = total,
+                TotalNet = totalNet,
+                OrderItems = ProductLines.Select(pl => new OrderItem
+                {
+                    ProductId = pl.SelectedProduct?.Id ?? 0,
+                    Quantity = pl.Quantity,
+                    UnitPrice = pl.UnitPrice,
+                    DiscountRate = pl.DiscountRate,
+                    Position = pl.Position
+                }).ToList()
+            };
+
+            var result = await _mediator.OrderService.CreateOrderAsync(newOrder);
+            MsgHelper.ShowInformation(result.Message, "Add Info");
+
         }
     }
 }
