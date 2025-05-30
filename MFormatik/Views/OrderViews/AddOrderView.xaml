@@ -5,9 +5,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MFormatik.Views.OrderViews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ordervms="clr-namespace:MFormatik.ViewModels.OrderVms"
+    xmlns:uc="clr-namespace:MFormatik.Views.ProductViews"
     Title="AddOrderView"
-    Width="600"
+    Width="820"
     Height="650"
+    d:DataContext="{d:DesignInstance Type=ordervms:AddOrderVM}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Grid>
@@ -60,20 +63,21 @@
                 <!--  title : Select a livness  -->
                 <TextBlock
                     Grid.Row="0"
-                    Margin="10,10,10,0"
-                    Padding="10"
+                    Margin="10,4,4,0"
+                    Padding="4"
                     FontSize="18"
                     FontWeight="Bold"
                     Foreground="{DynamicResource VisaBOT.DarkBlue}"
                     Text="Select un client" />
                 <ComboBox
-                    x:Name="SelectCB"
+                    x:Name="ClientCB"
                     Grid.Row="1"
+                    Height="35"
                     Margin="18,8,18,18"
-                    DisplayMemberPath="BlsEmail"
-                    ItemsSource="{Binding AllProfilesList}"
-                    SelectedItem="{Binding SelectedProfile}"
-                    SelectedValue="{Binding ProfileId}"
+                    DisplayMemberPath="FullName"
+                    ItemsSource="{Binding ClientsList}"
+                    SelectedItem="{Binding SelectedClient}"
+                    SelectedValue="{Binding ClientId}"
                     SelectedValuePath="Id"
                     Style="{DynamicResource main.ComboBox.Style}" />
             </Grid>
@@ -104,43 +108,41 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <!--  SubTitle  -->
+                    <!--  Ajoute des Produit  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="0"
-                        Grid.ColumnSpan="2"
                         Margin="0,0,0,12"
                         FontSize="18"
                         FontWeight="Bold"
                         Foreground="{DynamicResource VisaBOT.DarkBlue}"
-                        Text="Ajoute des Produit" />
-                    <!--  username TextBox  -->
-                    <StackPanel
+                        Text="Ajouter un articlet" />
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Width="30"
+                        Height="30"
+                        Margin="0,0,15,0"
+                        HorizontalAlignment="Right"
+                        Command="{Binding AddProductCommand}"
+                        Style="{StaticResource Icon.blue}"
+                        Tag="{StaticResource Plus}" />
+                    <!--  Product list  -->
+                    <ListBox
                         Grid.Row="1"
                         Grid.Column="0"
-                        Margin="0,0,8,20"
-                        Orientation="Vertical">
-                        <StackPanel Orientation="Horizontal">
-                            <Label
-                                HorizontalAlignment="Left"
-                                Content="User Name"
-                                FontSize="14" />
-                            <Label
-                                Margin="-6,0,0,0"
-                                HorizontalAlignment="Left"
-                                Content="*"
-                                Foreground="red" />
-                        </StackPanel>
-                        <TextBox x:Name="UsernameTB" Style="{DynamicResource TextBox.Normal}">
-                            <TextBox.Text>
-                                <Binding
-                                    NotifyOnValidationError="True"
-                                    Path="Username"
-                                    UpdateSourceTrigger="PropertyChanged"
-                                    ValidatesOnDataErrors="True" />
-                            </TextBox.Text>
-                        </TextBox>
-                    </StackPanel>
+                        Grid.ColumnSpan="2"
+                        Height="250"
+                        AllowDrop="True"
+                        ItemsSource="{Binding ProductLines}"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <uc:ProductLineControl DataContext="{Binding}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </Grid>
             </Border>
         </Grid>
