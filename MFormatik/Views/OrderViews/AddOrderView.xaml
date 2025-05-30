@@ -9,12 +9,13 @@
     xmlns:uc="clr-namespace:MFormatik.Views.ProductViews"
     Title="AddOrderView"
     Width="820"
-    Height="650"
+    Height="730"
     d:DataContext="{d:DesignInstance Type=ordervms:AddOrderVM}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -46,7 +47,7 @@
                     Text="Nouvelle Commande" />
             </StackPanel>
         </Border>
-        <!--  Select a Profile  -->
+        <!--  Select a Client  -->
         <Border
             Grid.Row="1"
             Margin="10"
@@ -60,7 +61,7 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
-                <!--  title : Select a livness  -->
+                <!--  title : Select a client  -->
                 <TextBlock
                     Grid.Row="0"
                     Margin="10,4,4,0"
@@ -82,13 +83,12 @@
                     Style="{DynamicResource main.ComboBox.Style}" />
             </Grid>
         </Border>
-        <!--  Sign Up Informations  -->
+        <!--  add product  -->
         <Grid Grid.Row="2" Margin="8,0,8,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <!--  Personal Section  -->
             <Border
                 Grid.Column="1"
                 Margin="0,0,6,0"
@@ -135,8 +135,8 @@
                         Height="250"
                         AllowDrop="True"
                         ItemsSource="{Binding ProductLines}"
-                        ScrollViewer.VerticalScrollBarVisibility="Auto"
-                        ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                        ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <uc:ProductLineControl DataContext="{Binding}" />
@@ -146,16 +146,84 @@
                 </Grid>
             </Border>
         </Grid>
-        <!--  SignUp buttol TextBox  -->
+        <!--  Detailes  -->
+        <Grid Grid.Row="3" Margin="8,0,8,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="20,8,0,0"
+                FontSize="18"
+                FontWeight="Bold"
+                Foreground="Black"
+                Text="Remise totale (%)" />
+            <TextBox
+                Grid.Row="0"
+                Grid.Column="1"
+                Width="300"
+                Height="30"
+                Margin="10,8,20,0"
+                HorizontalAlignment="Right"
+                Style="{DynamicResource TextBox.Normal}"
+                Tag="Remise totale"
+                Text="{Binding DiscountRate, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="20,8,0,0"
+                FontSize="20"
+                FontWeight="Bold"
+                Foreground="Black"
+                Text="Totale" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="1"
+                Width="300"
+                Height="30"
+                Margin="10,8,0,0"
+                HorizontalAlignment="Right"
+                FontSize="20"
+                Tag="Remise totale"
+                Text="{Binding Total, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="0"
+                Margin="20,8,0,0"
+                FontSize="22"
+                FontWeight="Bold"
+                Foreground="Green"
+                Text="Totale Net" />
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="1"
+                Width="300"
+                Height="30"
+                Margin="10,8,0,0"
+                HorizontalAlignment="Right"
+                FontSize="22"
+                FontWeight="Bold"
+                Foreground="Green"
+                Tag="Remise totale"
+                Text="{Binding TotalNet, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+        <!--  buttons  -->
         <StackPanel
-            Grid.Row="4"
+            Grid.Row="5"
             HorizontalAlignment="Center"
             Orientation="Horizontal">
             <Button
                 Width="120"
                 Height="35"
                 Margin="10"
-                Command="{Binding AddLivenessCommand}"
+                Command="{Binding SaveCommand}"
                 Content="Valide"
                 FlowDirection="RightToLeft"
                 Style="{DynamicResource Icon.Green}"
