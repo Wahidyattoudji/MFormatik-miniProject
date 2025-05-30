@@ -1,5 +1,7 @@
-﻿using MFormatik.Application.Helpers;
+﻿using CommunityToolkit.Mvvm.Input;
+using MFormatik.Application.Helpers;
 using MFormatik.Core.Models;
+using System.Windows.Input;
 
 namespace MFormatik.ViewModels.ProductVms
 {
@@ -11,7 +13,7 @@ namespace MFormatik.ViewModels.ProductVms
         private Product _selectedProduct;
         public Product SelectedProduct
         {
-            get => _selectedProduct;
+            get => _selectedProduct ?? Products.First();
             set
             {
                 if (_selectedProduct != value)
@@ -22,12 +24,12 @@ namespace MFormatik.ViewModels.ProductVms
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(ProductName));
                     OnPropertyChanged(nameof(ProductUnitPrice));
+                    EventDispatcher.Notify("RefreshValues");
                 }
             }
         }
 
         public string ProductName => SelectedProduct?.Name ?? "No Product";
-
         public decimal ProductUnitPrice
         {
             get => UnitPrice;
@@ -35,9 +37,9 @@ namespace MFormatik.ViewModels.ProductVms
             {
                 UnitPrice = value;
                 OnPropertyChanged();
+                NotifyViewModel();
             }
         }
-
         public int ProductId
         {
             get => OrderItem.ProductId;
@@ -49,15 +51,15 @@ namespace MFormatik.ViewModels.ProductVms
             }
         }
 
-
         public int Quantity
         {
             get => OrderItem.Quantity;
             set
             {
                 OrderItem.Quantity = value;
-                OnPropertyChanged(nameof(UnitPrice));
+                OnPropertyChanged();
                 OnPropertyChanged(nameof(NetPrice));
+                NotifyViewModel();
             }
         }
         public decimal UnitPrice
@@ -69,8 +71,9 @@ namespace MFormatik.ViewModels.ProductVms
             set
             {
                 OrderItem.UnitPrice = value;
-                OnPropertyChanged(nameof(UnitPrice));
+                OnPropertyChanged();
                 OnPropertyChanged(nameof(NetPrice));
+                NotifyViewModel();
             }
         }
         public decimal? DiscountRate
@@ -78,8 +81,11 @@ namespace MFormatik.ViewModels.ProductVms
             get => OrderItem.DiscountRate;
             set
             {
-                OrderItem.DiscountRate = value; OnPropertyChanged(nameof(DiscountRate));
+                OrderItem.DiscountRate = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(UnitPrice));
                 OnPropertyChanged(nameof(NetPrice));
+                NotifyViewModel();
             }
         }
         public int Position
@@ -103,20 +109,26 @@ namespace MFormatik.ViewModels.ProductVms
             get
             {
                 return OrderCalculationHelper.CalculateNetAmount(UnitPrice, DiscountRate ?? 0);
-                //var discount = (DiscountRate ?? 0) / 100m;
-                //return Quantity * UnitPrice * (1 - discount);
             }
         }
 
+        public ICommand ValidateProductCommand { get; }
+        public ICommand DeleteProductCommand { get; }
 
         public ProductLineViewModel(OrderItem orderItem, IReadOnlyList<Product> products)
         {
             OrderItem = orderItem;
             Products = products;
 
+            ValidateProductCommand = new RelayCommand(ValidateProduct);
+            DeleteProductCommand = new RelayCommand(DeleteProduct);
+
             _selectedProduct = new();
             _selectedProduct = Products.FirstOrDefault(p => p.Id == OrderItem.ProductId);
         }
 
+        private void ValidateProduct() => EventDispatcher.Notify("ValidateProduct", this);
+        private void DeleteProduct() => EventDispatcher.Notify("DeleteProduct", this);
+        private void NotifyViewModel() => EventDispatcher.Notify("RefreshValues");
     }
 }

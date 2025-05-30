@@ -60,9 +60,7 @@ namespace MFormatik.ViewModels.OrderVms
             }
         }
 
-
         public ObservableCollection<ProductLineViewModel> ProductLines { get; set; } = new ObservableCollection<ProductLineViewModel>();
-
 
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
@@ -83,9 +81,50 @@ namespace MFormatik.ViewModels.OrderVms
             CancelCommand = new RelayCommand(CloseWindow);
             AddProductCommand = new RelayCommand(AddProductToOrder);
 
+            EventDispatcher.Subscribe("RefreshValues", RefreshValues);
+            EventDispatcher.Subscribe("DeleteProduct", DeleteProduct);
+            EventDispatcher.Subscribe("ValidateProduct", ValidateProduct);
 
             LoadData();
             ClearData();
+        }
+        ~AddOrderVM()
+        {
+            _mediator.Unsubscribe("RefrshValues", RefreshValues);
+        }
+
+        private void ValidateProduct(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void AddProductToOrder()
+        {
+            var newOrderItem = new OrderItem { Quantity = 1 };
+            var newLine = new ProductLineViewModel(newOrderItem, ProductsList) { Position = ProductLines.Count + 1 };
+            ProductLines.Add(newLine);
+        }
+
+        private void DeleteProduct(object obj)
+        {
+            if (obj is ProductLineViewModel LineToDelete && ProductLines.Contains(LineToDelete))
+            {
+                ProductLines.Remove(LineToDelete);
+                UpdatePositions();
+                OnPropertyChanged(nameof(ProductLines));
+            }
+        }
+
+
+        private void RefreshValues(object obj)
+        {
+            CalculateValues();
+        }
+
+        private void CalculateValues()
+        {
+            Total = OrderCalculationHelper.CalculateTotal(ProductLines.Select(pl => pl.UnitPrice));
+            TotalNet = OrderCalculationHelper.CalculateTotalNet((decimal)Total, (decimal)DiscountRate!);
         }
 
         private async void LoadData()
@@ -107,13 +146,6 @@ namespace MFormatik.ViewModels.OrderVms
             OrderItems.Clear();
         }
 
-        private void AddProductToOrder()
-        {
-            var newOrderItem = new OrderItem { Quantity = 1 };
-            var newLine = new ProductLineViewModel(newOrderItem, ProductsList) { Position = ProductLines.Count + 1 };
-            ProductLines.Add(newLine);
-        }
-
         public void UpdatePositions()
         {
             for (int i = 0; i < ProductLines.Count; i++)
@@ -127,16 +159,16 @@ namespace MFormatik.ViewModels.OrderVms
 
         private async Task SaveOrder()
         {
-            var total = OrderCalculationHelper.CalculateTotal(ProductLines.Select(pl => pl.UnitPrice));
-            var totalNet = OrderCalculationHelper.CalculateTotalNet(total, (decimal)DiscountRate);
+            //var total = OrderCalculationHelper.CalculateTotal(ProductLines.Select(pl => pl.UnitPrice));
+            //var totalNet = OrderCalculationHelper.CalculateTotalNet(total, (decimal)DiscountRate);
 
             var newOrder = new Order
             {
                 ClientId = SelectedClient?.Id ?? 0,
                 OrderDate = DateTime.Now,
                 DiscountRate = DiscountRate ?? 0,
-                Total = total,
-                TotalNet = totalNet,
+                Total = Total,
+                TotalNet = TotalNet,
                 OrderItems = ProductLines.Select(pl => new OrderItem
                 {
                     ProductId = pl.SelectedProduct?.Id ?? 0,

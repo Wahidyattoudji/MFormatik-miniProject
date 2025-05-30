@@ -28,3 +28,4 @@ public static partial class OrderCalculationHelper
         return total * (1 - discountDecimal);
     }
 }
+

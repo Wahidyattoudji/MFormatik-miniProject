@@ -10,6 +10,7 @@ namespace MFormatik.Application.MediatorService
         IOrderService OrderService { get; }
 
         Order SelectedOrder { get; set; }
+        OrderItem TempOrderItem { get; set; }
 
         void Subscribe(string message, Action<object> callback);
         void Unsubscribe(string message, Action<object> callback);

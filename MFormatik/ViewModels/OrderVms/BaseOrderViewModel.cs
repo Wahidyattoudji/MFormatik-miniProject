@@ -52,6 +52,7 @@ namespace MFormatik.ViewModels.OrderVms
                 {
                     Order.Total = value;
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(TotalNet));
                 }
             }
         }
@@ -69,13 +70,14 @@ namespace MFormatik.ViewModels.OrderVms
         }
         public decimal? DiscountRate
         {
-            get => Order.DiscountRate;
+            get => Order.DiscountRate ?? 0;
             set
             {
                 if (Order.DiscountRate != value)
                 {
                     Order.DiscountRate = value;
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(TotalNet));
                 }
             }
         }

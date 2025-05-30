@@ -22,6 +22,18 @@ namespace MFormatik.Application.MediatorService
             }
         }
 
+        private OrderItem _tempOrderItem;
+        public OrderItem TempOrderItem
+        {
+            get { return _tempOrderItem; }
+            set
+            {
+                if (_tempOrderItem == value) return;
+                _tempOrderItem = value;
+            }
+        }
+
+
         public Mediator(IClientService clientService, IProductService productService, IOrderService orderService)
         {
             ClientService = clientService;

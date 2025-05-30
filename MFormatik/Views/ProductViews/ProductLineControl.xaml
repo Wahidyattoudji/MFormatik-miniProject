@@ -20,17 +20,19 @@
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
         <TextBlock
             Grid.Column="0"
+            Height="15"
             VerticalAlignment="Center"
             FontSize="12"
             Text="{Binding Position}" />
         <ComboBox
             Grid.Column="1"
-            Width="140"
             Height="30"
+            Margin="5,0,5,0"
             VerticalAlignment="Center"
             DisplayMemberPath="Name"
             ItemsSource="{Binding Products}"
@@ -39,23 +41,23 @@
             Tag="Article" />
         <TextBox
             Grid.Column="2"
-            Width="90"
+            Height="30"
             Margin="0,0,5,0"
             VerticalAlignment="Center"
             Style="{StaticResource TextBox.Normal}"
             Tag="Prix uni"
-            Text="{Binding ProductUnitPrice, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding ProductUnitPrice, TargetNullValue=0, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             Grid.Column="3"
-            Width="90"
+            Height="30"
             Margin="0,0,5,0"
             VerticalAlignment="Center"
             Style="{StaticResource TextBox.Normal}"
             Tag="Quantité"
-            Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding Quantity, TargetNullValue=0, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             Grid.Column="4"
-            Width="80"
+            Height="30"
             Margin="0,0,5,0"
             VerticalAlignment="Center"
             Style="{StaticResource TextBox.Normal}"
@@ -63,24 +65,33 @@
             Text="{Binding DiscountRate, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             Grid.Column="5"
-            Width="100"
+            Height="30"
             Margin="0,0,5,0"
             VerticalAlignment="Center"
+            IsReadOnly="True"
             Style="{StaticResource TextBox.Normal}"
             Tag="Montant"
             Text="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             Grid.Column="6"
-            Width="100"
+            Height="30"
             Margin="0,0,5,0"
             VerticalAlignment="Center"
+            IsReadOnly="True"
             Style="{StaticResource TextBox.Normal}"
             Tag="Montant net"
-            Text="{Binding NetPrice, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding NetPrice, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
         <Button
             Grid.Column="7"
-            Width="30"
+            Margin="0,0,5,0"
             Padding="0,0,8,0"
+            Command="{Binding ValidateProductCommand}"
+            Style="{StaticResource Icon.blue}"
+            Tag="{StaticResource Plus}" />
+        <Button
+            Grid.Column="8"
+            Padding="0,0,8,0"
+            Command="{Binding DeleteProductCommand}"
             Style="{StaticResource Icon.Red}"
             Tag="{StaticResource Delete}" />
     </Grid>

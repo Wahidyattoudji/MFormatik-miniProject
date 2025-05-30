@@ -8,7 +8,8 @@
     xmlns:ordervms="clr-namespace:MFormatik.ViewModels.OrderVms"
     xmlns:uc="clr-namespace:MFormatik.Views.ProductViews"
     Title="AddOrderView"
-    Width="820"
+    ResizeMode="NoResize"
+    Width="850"
     Height="730"
     d:DataContext="{d:DesignInstance Type=ordervms:AddOrderVM}"
     WindowStartupLocation="CenterScreen"
@@ -191,6 +192,7 @@
                 Margin="10,8,0,0"
                 HorizontalAlignment="Right"
                 FontSize="20"
+                IsEnabled="False"
                 Tag="Remise totale"
                 Text="{Binding Total, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
