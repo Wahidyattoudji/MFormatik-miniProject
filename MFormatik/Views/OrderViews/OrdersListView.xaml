@@ -80,8 +80,7 @@
                     Content="Nouvell Command"
                     FlowDirection="RightToLeft"
                     Style="{StaticResource Icon.Text.blue}"
-                    Tag="{StaticResource Add.Account}" />
-
+                    Tag="{StaticResource Plus}" />
                 <!--  Row 2 CRUD Buttons  -->
                 <Grid Grid.Row="1" Margin="0,8,0,6">
                     <Grid.ColumnDefinitions>
@@ -140,9 +139,9 @@
                             Height="35"
                             Margin="0,0,5,0"
                             Padding="1,0"
-                            Command="{Binding SearchCommand}"
+                            Command="{Binding DateFiltringCommand}"
                             Style="{StaticResource Icon.Text.blue}"
-                            Tag="{StaticResource search}" />
+                            Tag="{StaticResource Filter}" />
                         <Button
                             Height="35"
                             Margin="0,0,10,0"
