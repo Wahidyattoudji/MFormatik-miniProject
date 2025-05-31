@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:MFormatik.Views.OrderViews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ordervms="clr-namespace:MFormatik.ViewModels.OrderVms"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     x:Name="OrderListView"
     d:DataContext="{d:DesignInstance Type=ordervms:OrdersListVM}"
     d:DesignHeight="700"
@@ -97,20 +98,33 @@
                             ItemsSource="{Binding}"
                             Style="{StaticResource main.ComboBox.Style}"
                             Tag="Order By" />
+                        <TextBlock
+                            Margin="0,0,4,0"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Text="De" />
                         <DatePicker
-                            Width="200"
+                            Width="180"
                             Height="35"
                             Margin="0,0,4,0"
-                            SelectedDate="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedDate="{Binding StartDate}"
                             Style="{StaticResource Style.DatePicker}"
-                            Tag="Debit" />
+                            Tag="début" />
+                        <TextBlock
+                            Margin="0,0,4,0"
+                            VerticalAlignment="Center"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Text="à" />
                         <DatePicker
-                            Width="200"
+                            Width="180"
                             Height="35"
                             Margin="0,0,10,0"
-                            SelectedDate="{Binding EndDate, UpdateSourceTrigger=PropertyChanged}"
+                            DisplayDateStart="{Binding StartDate}"
+                            SelectedDate="{Binding EndDate, Mode=TwoWay}"
                             Style="{StaticResource Style.DatePicker}"
-                            Tag="Fin" />
+                            Tag="fin" />
                     </StackPanel>
                     <!--  Search  -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal">

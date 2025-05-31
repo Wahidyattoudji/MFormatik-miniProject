@@ -30,10 +30,9 @@ namespace MFormatik.ViewModels.OrderVms
             get => _selectedOrder;
             set
             {
-                if (SelectedOrder != value)
+                if (_selectedOrder != value)
                 {
                     _selectedOrder = value;
-                    _mediator.SelectedOrder = value;
                     OnPropertyChanged();
                 }
             }
@@ -71,6 +70,7 @@ namespace MFormatik.ViewModels.OrderVms
         public ICommand OpenAddOrederCommand { get; }
         public ICommand PrintOrderCommand { get; }
         public ICommand DeleteOrderCommand { get; }
+        public ICommand DateFiltringCommand { get; }
 
         public ICommand SearchCommand { get; }
         public ICommand ReloadCommand { get; }
@@ -99,27 +99,34 @@ namespace MFormatik.ViewModels.OrderVms
         }
         #endregion
 
-        private DateTime _startDate;
-        public DateTime StartDate
+        private DateTime? _startDate;
+        public DateTime? StartDate
         {
-            get => _startDate;
+            get => _startDate ?? DateTime.Now.Date;
             set
             {
                 if (_startDate != value)
                 {
                     _startDate = value;
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(EndDate));
                 }
             }
         }
-        private DateTime _endDate;
-        public DateTime EndDate
+        private DateTime? _endDate;
+        public DateTime? EndDate
         {
-            get => _endDate;
+            get => _endDate ?? StartDate;
             set
             {
                 if (_endDate != value)
                 {
+                    if (value < StartDate)
+                    {
+                        MsgHelper.ShowError("La date de fin ne peut pas être antérieure à la date de début.", "Wrong Date");
+                        _endDate = StartDate.Value.AddDays(1);
+                        return;
+                    }
                     _endDate = value;
                     OnPropertyChanged();
                 }
@@ -129,10 +136,11 @@ namespace MFormatik.ViewModels.OrderVms
         public OrdersListVM(IMediator mediator)
         {
             _mediator = mediator;
-
+            //   StartDate = DateTime.Now;
             OpenAddOrederCommand = new RelayCommand(OpenAddOrderWindow);
             PrintOrderCommand = new RelayCommand(PrintOrder);
-            DeleteOrderCommand = new RelayCommand(() => DeleteOrder());
+            DeleteOrderCommand = new RelayCommand(DeleteOrde);
+            DateFiltringCommand = new RelayCommand(DateFiltring);
             SearchCommand = new RelayCommand(SearchOrder);
             ReloadCommand = new RelayCommand(Reload);
             #region Search Command Initial
@@ -142,15 +150,16 @@ namespace MFormatik.ViewModels.OrderVms
             };
             _searchTimer.Tick += SearchTimer_Tick;
             #endregion
-            _mediator.Subscribe("ReloadOrdersListData", OnReloadData);
             _initializeTask = new Lazy<Task>(() => LoadDataAsync());
         }
-        ~OrdersListVM()
+
+        private void DateFiltring()
         {
-            _mediator.Unsubscribe("ReloadOrdersListData", OnReloadData);
+
+            //throw new NotImplementedException();
         }
 
-        private async Task DeleteOrder()
+        private async void DeleteOrde()
         {
             if (SelectedOrder == null)
             {
@@ -159,7 +168,7 @@ namespace MFormatik.ViewModels.OrderVms
             if (MsgHelper.DeleteConfirmation("Commande"))
             {
                 await _mediator.OrderService.DeleteOrderAsync(SelectedOrder);
-                Reload();
+                await LoadDataAsync();
             }
         }
 
@@ -188,6 +197,7 @@ namespace MFormatik.ViewModels.OrderVms
         {
             string SearchItem = SearchText;
             OrdersList = await _mediator.OrderService.SearchOrdersAsync(SearchItem);
+            ShowEmptyDataGridMsg = DataGridHelper.IsEmpty(OrdersList);
         }
 
         private async Task LoadDataAsync()
@@ -199,7 +209,6 @@ namespace MFormatik.ViewModels.OrderVms
 
         public async void Reload()
         {
-            _mediator.SelectedOrder = null;
             await LoadDataAsync();
         }
 

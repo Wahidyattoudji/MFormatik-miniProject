@@ -1,5 +1,4 @@
 ﻿using MFormatik.Application.Services.Contracts;
-using MFormatik.Core.Models;
 
 namespace MFormatik.Application.MediatorService
 {
@@ -9,29 +8,6 @@ namespace MFormatik.Application.MediatorService
         public IProductService ProductService { get; }
         public IOrderService OrderService { get; }
 
-        private Order _selectedOrder;
-        public Order SelectedOrder
-        {
-            get => _selectedOrder;
-            set
-            {
-                if (_selectedOrder != value)
-                {
-                    _selectedOrder = value;
-                }
-            }
-        }
-
-        private OrderItem _tempOrderItem;
-        public OrderItem TempOrderItem
-        {
-            get { return _tempOrderItem; }
-            set
-            {
-                if (_tempOrderItem == value) return;
-                _tempOrderItem = value;
-            }
-        }
 
 
         public Mediator(IClientService clientService, IProductService productService, IOrderService orderService)
