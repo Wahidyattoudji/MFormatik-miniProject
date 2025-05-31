@@ -100,7 +100,7 @@ namespace MFormatik.ViewModels.OrderVms
         }
         #endregion
 
-        // For Date Filtering
+        #region DataFeltring
         private string _orderByOption;
         public string OrderByOption
         {
@@ -146,14 +146,14 @@ namespace MFormatik.ViewModels.OrderVms
                 }
             }
         }
+        #endregion
 
         public OrdersListVM(IMediator mediator)
         {
             _mediator = mediator;
-            //   StartDate = DateTime.Now;
             OpenAddOrederCommand = new RelayCommand(OpenAddOrderWindow);
-            PrintOrderCommand = new RelayCommand(PrintOrder);
             DeleteOrderCommand = new RelayCommand(DeleteOrde);
+            PrintOrderCommand = new RelayCommand(PrintOrder);
             DateFiltringCommand = new RelayCommand(DateFiltring);
             GroupByFiltringCommand = new RelayCommand(GroupByFiltring);
             SearchCommand = new RelayCommand(SearchOrder);
@@ -166,6 +166,29 @@ namespace MFormatik.ViewModels.OrderVms
             _searchTimer.Tick += SearchTimer_Tick;
             #endregion
             _initializeTask = new Lazy<Task>(() => LoadDataAsync());
+        }
+
+        private void OpenAddOrderWindow()
+        {
+            bool isWindowOpen = App.Current.Windows.OfType<AddOrderView>().Any();
+            if (!isWindowOpen)
+            {
+                var addOrderView = App.ServiceProvider.GetRequiredService<AddOrderView>();
+                addOrderView.Show();
+            }
+        }
+
+        private async void DeleteOrde()
+        {
+            if (SelectedOrder == null)
+            {
+                MsgHelper.ShowNoSelectionError("Commande");
+            }
+            if (MsgHelper.DeleteConfirmation("Commande"))
+            {
+                await _mediator.OrderService.DeleteOrderAsync(SelectedOrder);
+                await LoadDataAsync();
+            }
         }
 
         private async void GroupByFiltring()
@@ -205,19 +228,6 @@ namespace MFormatik.ViewModels.OrderVms
             }
         }
 
-        private async void DeleteOrde()
-        {
-            if (SelectedOrder == null)
-            {
-                MsgHelper.ShowNoSelectionError("Commande");
-            }
-            if (MsgHelper.DeleteConfirmation("Commande"))
-            {
-                await _mediator.OrderService.DeleteOrderAsync(SelectedOrder);
-                await LoadDataAsync();
-            }
-        }
-
         private void PrintOrder()
         {
             if (SelectedOrder == null)
@@ -227,16 +237,6 @@ namespace MFormatik.ViewModels.OrderVms
             }
             var printer = App.ServiceProvider.GetRequiredService<IOrderPrinter>();
             printer.Print(SelectedOrder);
-        }
-
-        private void OpenAddOrderWindow()
-        {
-            bool isWindowOpen = App.Current.Windows.OfType<AddOrderView>().Any();
-            if (!isWindowOpen)
-            {
-                var addOrderView = App.ServiceProvider.GetRequiredService<AddOrderView>();
-                addOrderView.Show();
-            }
         }
 
         private async void SearchOrder()
@@ -257,8 +257,6 @@ namespace MFormatik.ViewModels.OrderVms
         {
             await LoadDataAsync();
         }
-
-        private async void OnReloadData(object obj) => await LoadDataAsync();
 
         public async Task EnsureDataLoadedAsync() => await _initializeTask.Value;
 

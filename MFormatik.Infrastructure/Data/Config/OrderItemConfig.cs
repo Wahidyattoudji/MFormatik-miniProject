@@ -33,12 +33,12 @@ namespace MFormatik.Infrastructure.Data.Config
             HasRequired(oi => oi.Order)
                 .WithMany(o => o.OrderItems)
                 .HasForeignKey(oi => oi.OrderId)
-                .WillCascadeOnDelete(false);
+                .WillCascadeOnDelete(true);
 
             HasRequired(oi => oi.Product)
                 .WithMany(p => p.OrderItems)
                 .HasForeignKey(oi => oi.ProductId)
-                .WillCascadeOnDelete(false);
+                .WillCascadeOnDelete(true);
         }
     }
 }

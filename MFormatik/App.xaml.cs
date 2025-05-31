@@ -9,6 +9,7 @@ using MFormatik.Views.Pages;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Configuration;
+using System.Data.Entity;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -26,16 +27,27 @@ public partial class App : System.Windows.Application
         ConfigureLogging();
     }
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         var serviceCollection = new ServiceCollection();
         ConfigureServices(serviceCollection);
-
         ServiceProvider = serviceCollection.BuildServiceProvider();
+
+        await PreWarmDataBase();
 
         var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
         mainWindow?.Show();
         base.OnStartup(e);
+    }
+
+    private async Task PreWarmDataBase()
+    {
+        string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        var dbContextFactory = new DbContextFactory<MFormatikContext>(connectionString);
+        using (var dbContext = dbContextFactory.CreateDbContext())
+        {
+            await dbContext.Orders.ToListAsync();
+        }
     }
 
     public static void ConfigureServices(IServiceCollection services)

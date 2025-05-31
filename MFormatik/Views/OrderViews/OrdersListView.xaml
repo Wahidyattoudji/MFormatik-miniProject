@@ -71,7 +71,6 @@
                     </Border>
 
                 </StackPanel>
-                <!--    -->
                 <Button
                     Width="200"
                     Height="36"
@@ -91,9 +90,9 @@
                     <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
                         <ComboBox
                             Name="OrderStatusComboBox"
-                            Width="180"
+                            Width="200"
                             Height="35"
-                            Margin="0,0,6,0"
+                            Margin="0,0,10,0"
                             SelectedValue="{Binding OrderByOption, Mode=TwoWay}"
                             SelectedValuePath="Content"
                             Style="{StaticResource main.ComboBox.Style}"
