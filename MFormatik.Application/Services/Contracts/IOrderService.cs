@@ -1,5 +1,4 @@
-﻿using MFormatik.Core.Const;
-using MFormatik.Core.DTOs;
+﻿using MFormatik.Core.DTOs;
 using MFormatik.Core.Models;
 using System.Collections.ObjectModel;
 
@@ -13,6 +12,13 @@ namespace MFormatik.Application.Services.Contracts
 
         Task<ObservableCollection<Order>> GetAllOrdersAsync();
         Task<ObservableCollection<Order>> SearchOrdersAsync(string searchItem);
-        Task<ObservableCollection<Order>> FilterByDateAsync(DateTime startDate, DateTime endDate, string orderDirection = OrderDirection.Ascending);
+
+        Task<ObservableCollection<Order>> FilterByDateAsync(DateTime startDate, DateTime endDate
+                                                             , string? orderDirection = null);
+
+        Task<ObservableCollection<Order>> GroupByOrderDateAsync();
+        Task<ObservableCollection<Order>> GroupByClientAsync();
+        Task<ObservableCollection<Order>> GroupByTotalNetAsync();
+
     }
 }

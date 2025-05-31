@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:MFormatik.Views.OrderViews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ordervms="clr-namespace:MFormatik.ViewModels.OrderVms"
@@ -70,7 +71,7 @@
                     </Border>
 
                 </StackPanel>
-                <!--  Add button  -->
+                <!--    -->
                 <Button
                     Width="200"
                     Height="36"
@@ -81,7 +82,7 @@
                     FlowDirection="RightToLeft"
                     Style="{StaticResource Icon.Text.blue}"
                     Tag="{StaticResource Plus}" />
-                <!--  Row 2 CRUD Buttons  -->
+                <!--  Row 2  -->
                 <Grid Grid.Row="1" Margin="0,8,0,6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -93,10 +94,20 @@
                             Width="180"
                             Height="35"
                             Margin="0,0,6,0"
-                            DisplayMemberPath="Name"
-                            ItemsSource="{Binding}"
+                            SelectedValue="{Binding OrderByOption, Mode=TwoWay}"
+                            SelectedValuePath="Content"
                             Style="{StaticResource main.ComboBox.Style}"
-                            Tag="Order By" />
+                            Tag="Order By">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding GroupByFiltringCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <ComboBoxItem Content="Tous" IsSelected="True" />
+                            <ComboBoxItem Content="Client" />
+                            <ComboBoxItem Content="Date de Commande" />
+                            <ComboBoxItem Content="Total Net" />
+                        </ComboBox>
                         <TextBlock
                             Margin="0,0,4,0"
                             VerticalAlignment="Center"
@@ -172,7 +183,7 @@
                                 Header="Client" />
                             <DataGridTextColumn
                                 Width="*"
-                                Binding="{Binding OrderDate}"
+                                Binding="{Binding OrderDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"
                                 Header="Commande Date" />
                             <DataGridTextColumn
                                 Width="*"

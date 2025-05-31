@@ -15,21 +15,54 @@ namespace MFormatik.Application.Services
             _unitOfWork = unitOfWork;
         }
 
-
         public async Task<ObservableCollection<Order>> GetAllOrdersAsync()
         {
             var orders = await _unitOfWork.OrderRepository.GetAllOrdersAsync();
             return new ObservableCollection<Order>(orders);
         }
 
+        public async Task<ObservableCollection<Order>> FilterByDateAsync(
+            DateTime startDate, DateTime endDate,
+            string? OrderDirection = null)
 
-        public async Task<ObservableCollection<Order>> FilterByDateAsync(DateTime startDate, DateTime endDate, string OrderBy)
         {
             var OrdersByDate = await _unitOfWork.OrderRepository
-                                                .FilterOrdersAsync(o => o.OrderDate >= startDate && o.OrderDate <= endDate, OrderBy);
+                                                   .FilterOrdersAsync<bool>(
+                o => o.OrderDate >= startDate && o.OrderDate <= endDate,
+                q => q.OrderBy(o => o.OrderDate)
+                );
 
             return new ObservableCollection<Order>(OrdersByDate ?? Enumerable.Empty<Order>());
         }
+
+        public async Task<ObservableCollection<Order>> GroupByClientAsync()
+        {
+            var filteredList = await _unitOfWork.OrderRepository.FilterOrdersAsync<int>(
+                    predicate: null,
+                    orderBy: null,
+                    groupBy: o => o.Client.Id);
+            return new ObservableCollection<Order>(filteredList);
+        }
+
+        public async Task<ObservableCollection<Order>> GroupByOrderDateAsync()
+        {
+            var filteredList = await _unitOfWork.OrderRepository.FilterOrdersAsync<DateTime>(
+                    predicate: null,
+                    orderBy: null,
+                    groupBy: o => o.OrderDate);
+            return new ObservableCollection<Order>(filteredList);
+        }
+
+        public async Task<ObservableCollection<Order>> GroupByTotalNetAsync()
+        {
+            var filteredList = await _unitOfWork.OrderRepository.FilterOrdersAsync<decimal?>(
+                    predicate: null,
+                    orderBy: null,
+                    groupBy: o => o.TotalNet);
+            return new ObservableCollection<Order>(filteredList);
+        }
+
+
 
         public async Task<ObservableCollection<Order>> SearchOrdersAsync(string searchItem)
         {
@@ -37,7 +70,7 @@ namespace MFormatik.Application.Services
             return new ObservableCollection<Order>(orders);
         }
 
-
+        #region CRUD
         public async Task<Result> CreateOrderAsync(Order order)
         {
             return await _unitOfWork.OrderRepository.AddAsync(order);
@@ -50,6 +83,7 @@ namespace MFormatik.Application.Services
         {
             return await _unitOfWork.OrderRepository.DeleteAsync(order.Id);
         }
+        #endregion
 
     }
 

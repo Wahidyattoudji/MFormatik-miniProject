@@ -34,22 +34,32 @@ namespace MFormatik.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<Order>> FilterOrdersAsync(Expression<Func<Order, bool>> predicate, string orderDirection)
+
+        public async Task<IEnumerable<Order>> FilterOrdersAsync<TKey>(
+                            Expression<Func<Order, bool>>? predicate,
+                            Func<IQueryable<Order>, IOrderedQueryable<Order>> orderBy = null,
+                            Expression<Func<Order, TKey>> groupBy = null)
         {
-            try
-            {
-                IQueryable<Order> query = _context.Orders
-                                        .Where(predicate)
-                                        .AsNoTracking();
+            IQueryable<Order> query = _context.Orders.AsNoTracking();
 
-
-                return query;
-            }
-            catch (Exception ex)
+            if (predicate != null)
             {
-                ex.LogError();
-                return new List<Order>();
+                query = query.Where(predicate);
             }
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+            if (groupBy != null)
+            {
+                return await query
+                    .GroupBy(groupBy)
+                    .SelectMany(g => g)
+                    .Distinct()
+                    .ToListAsync();
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<IEnumerable<Order>> SearchOrdersAsync(string searchItem)
@@ -73,5 +83,7 @@ namespace MFormatik.Infrastructure.Repositories
                 return new List<Order>();
             }
         }
+
+
     }
 }

@@ -71,6 +71,7 @@ namespace MFormatik.ViewModels.OrderVms
         public ICommand PrintOrderCommand { get; }
         public ICommand DeleteOrderCommand { get; }
         public ICommand DateFiltringCommand { get; }
+        public ICommand GroupByFiltringCommand { get; }
 
         public ICommand SearchCommand { get; }
         public ICommand ReloadCommand { get; }
@@ -99,6 +100,19 @@ namespace MFormatik.ViewModels.OrderVms
         }
         #endregion
 
+        // For Date Filtering
+        private string _orderByOption;
+        public string OrderByOption
+        {
+            get => _orderByOption;
+            set
+            {
+                if (_orderByOption == value) return;
+                _orderByOption = value;
+                OnPropertyChanged();
+            }
+        }
+
         private DateTime? _startDate;
         public DateTime? StartDate
         {
@@ -116,7 +130,7 @@ namespace MFormatik.ViewModels.OrderVms
         private DateTime? _endDate;
         public DateTime? EndDate
         {
-            get => _endDate ?? StartDate;
+            get => _endDate;
             set
             {
                 if (_endDate != value)
@@ -141,6 +155,7 @@ namespace MFormatik.ViewModels.OrderVms
             PrintOrderCommand = new RelayCommand(PrintOrder);
             DeleteOrderCommand = new RelayCommand(DeleteOrde);
             DateFiltringCommand = new RelayCommand(DateFiltring);
+            GroupByFiltringCommand = new RelayCommand(GroupByFiltring);
             SearchCommand = new RelayCommand(SearchOrder);
             ReloadCommand = new RelayCommand(Reload);
             #region Search Command Initial
@@ -153,10 +168,41 @@ namespace MFormatik.ViewModels.OrderVms
             _initializeTask = new Lazy<Task>(() => LoadDataAsync());
         }
 
-        private void DateFiltring()
+        private async void GroupByFiltring()
         {
+            if (OrderByOption == null) return;
 
-            //throw new NotImplementedException();
+            switch (OrderByOption)
+            {
+                case "Client":
+                    OrdersList = await _mediator.OrderService.GroupByClientAsync();
+                    break;
+                case "Date de Commande":
+                    OrdersList = await _mediator.OrderService.GroupByOrderDateAsync();
+                    break;
+                case "Total Net":
+                    OrdersList = await _mediator.OrderService.GroupByTotalNetAsync();
+                    break;
+                default:
+                    Reload();
+                    return;
+            }
+            ShowEmptyDataGridMsg = DataGridHelper.IsEmpty(OrdersList);
+        }
+
+        private async void DateFiltring()
+        {
+            if (EndDate == null) return;
+
+            if (StartDate <= EndDate)
+            {
+                OrdersList = await _mediator.OrderService.FilterByDateAsync(StartDate.Value, EndDate.Value);
+                ShowEmptyDataGridMsg = DataGridHelper.IsEmpty(OrdersList);
+            }
+            else
+            {
+                MsgHelper.ShowError("La date de fin ne peut pas être antérieure à la date de début.", "Wrong Date");
+            }
         }
 
         private async void DeleteOrde()
