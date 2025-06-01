@@ -74,6 +74,24 @@
                         Content="Commandes"
                         Style="{DynamicResource SideMenu.RadioBtn.Normal}"
                         Tag="{DynamicResource payment}" />
+                    <RadioButton
+                        Margin="0,40,0,5"
+                        Content="Favorites"
+                        Foreground="Black"
+                        IsEnabled="False"
+                        Style="{DynamicResource SideMenu.RadioBtn.Normal}"
+                        Tag="{DynamicResource Star}" />
+                    <ItemsControl ItemsSource="{Binding Favorites}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Margin="5"
+                                    Command="{Binding DataContext.OpenWindowCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding ViewName}"
+                                    Content="{Binding ViewTitle}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </Grid>
         </Border>

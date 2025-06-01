@@ -1,6 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using MFormatik.Application.Helpers;
+using MFormatik.Core.Models;
 using MFormatik.Services.Abstracts;
 using MFormatik.Views.Pages;
+using Microsoft.Extensions.DependencyInjection;
+using System.Windows;
 using System.Windows.Input;
 
 namespace MFormatik.ViewModels
@@ -25,6 +29,18 @@ namespace MFormatik.ViewModels
 
         public ICommand NavigateToHomeCommand { get; }
         public ICommand NavigateToOrdersCommand { get; }
+        public ICommand OpenWindowCommand { get; }
+
+        private List<FavoriteView> _favorites;
+        public List<FavoriteView> Favorites
+        {
+            get => _favorites;
+            set
+            {
+                _favorites = value;
+                OnPropertyChanged();
+            }
+        }
 
 
         public MainWindowVM(INavigationService navigationService, HomePage homePage, OrdersPage ordersPage)
@@ -35,10 +51,28 @@ namespace MFormatik.ViewModels
 
             NavigateToHomeCommand = new RelayCommand(NavigateToHomePage);
             NavigateToOrdersCommand = new RelayCommand(NavigateToOrdersPage);
-
+            OpenWindowCommand = new RelayCommand<string>(OpenFavWindow);
+            LoadFavorites();
             IsHomeChecked = true;
             NavigateToHomePage();
+            EventDispatcher.Subscribe("RefreshFavorites", RefreshFavorites);
         }
+
+
+        private void OpenFavWindow(string viewName)
+        {
+            var viewType = Type.GetType($"MFormatik.Views.{viewName}");
+            if (viewType == null)
+            {
+                MessageBox.Show($"Cant Find {viewName}");
+                return;
+            }
+            var window = App.ServiceProvider.GetRequiredService(viewType) as Window;
+            window?.Show();
+        }
+
+        private void LoadFavorites() => Favorites = FavoritesService.LoadFavorites();
+        private void RefreshFavorites(object obj) => LoadFavorites();
 
         private void NavigateToHomePage() => _navigationService.NavigateTo(_homePage);
         private void NavigateToOrdersPage() => _navigationService.NavigateTo(_ordersPage);
