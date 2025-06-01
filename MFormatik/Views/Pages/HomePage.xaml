@@ -9,5 +9,23 @@
     d:DesignHeight="700"
     d:DesignWidth="1000"
     mc:Ignorable="d">
-    <Grid  Background="AntiqueWhite"/>
+    <Border Background="WhiteSmoke" CornerRadius="8">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel Margin="20,20,20,0" VerticalAlignment="Top">
+                <TextBlock
+                    Margin="0,0,0,10"
+                    FontSize="24"
+                    FontWeight="Bold"
+                    Text="Welcome to MFormatik!" />
+                <TextBlock
+                    FontSize="16"
+                    Text="This is the home page as u see."
+                    TextWrapping="WrapWithOverflow" />
+            </StackPanel>
+        </Grid>
+    </Border>
 </Page>

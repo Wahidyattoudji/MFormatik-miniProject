@@ -204,7 +204,9 @@ namespace MFormatik.ViewModels.OrderVms
 
         private void DeleteProduct(object obj)
         {
-            if (obj is ProductLineViewModel LineToDelete && FinalProductLines.Contains(LineToDelete))
+            if (obj is ProductLineViewModel LineToDelete
+                && (FinalProductLines.Contains(LineToDelete) || TempProductLines.Contains(LineToDelete))
+                )
             {
                 TempProductLines.Remove(LineToDelete);
                 FinalProductLines.Remove(LineToDelete);
