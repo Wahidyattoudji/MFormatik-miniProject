@@ -165,6 +165,7 @@ namespace MFormatik.ViewModels.OrderVms
             };
             _searchTimer.Tick += SearchTimer_Tick;
             #endregion
+            _mediator.Subscribe("ReloadOrdersList", _ => Reload());
             _initializeTask = new Lazy<Task>(() => LoadDataAsync());
         }
 

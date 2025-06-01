@@ -1,5 +1,6 @@
 ﻿using MFormatik.Core.Models;
 using MFormatik.Services.Abstracts;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -22,8 +23,11 @@ namespace MFormatik.Services
                 pd.PrintDocument(idpSource.DocumentPaginator, $"Order {order.Id}");
             }
         }
+
         private FlowDocument CreateFlowDocument(Order order)
         {
+            var usCulture = CultureInfo.GetCultureInfo("en-US"); // دولار أمريكي
+
             FlowDocument doc = new FlowDocument
             {
                 PagePadding = new Thickness(50),
@@ -50,70 +54,63 @@ namespace MFormatik.Services
             // Table for Order Items
             Table table = new Table
             {
-                CellSpacing = 0, // مهم لإظهار الحدود بشكل متواصل
+                CellSpacing = 0,
                 BorderBrush = Brushes.Black,
                 BorderThickness = new Thickness(1)
             };
             doc.Blocks.Add(table);
 
-            // Define columns
             for (int i = 0; i < 6; i++)
                 table.Columns.Add(new TableColumn { Width = new GridLength(i == 0 ? 200 : 100) });
 
             TableRowGroup trg = new TableRowGroup();
             table.RowGroups.Add(trg);
 
-            // Header
             TableRow header = new TableRow();
-            string[] headers = { "Article", "Prix unitaire", "Quantité", "Remise %", "Montant", "Montant net" };
+            string[] headers = { "Article", "Unit Price", "Quantity", "Discount %", "Amount", "Net Amount" };
             foreach (var h in headers)
-            {
                 header.Cells.Add(CreateBorderedCell(h, FontWeights.Bold));
-            }
             trg.Rows.Add(header);
 
-            // Rows
             foreach (var item in order.OrderItems)
             {
                 TableRow row = new TableRow();
                 row.Cells.Add(CreateBorderedCell(item.Product.Name));
-                row.Cells.Add(CreateBorderedCell(item.Product.UnitPrice.ToString()));
+                row.Cells.Add(CreateBorderedCell(item.Product.UnitPrice.ToString("C", usCulture)));
                 row.Cells.Add(CreateBorderedCell(item.Quantity.ToString()));
                 row.Cells.Add(CreateBorderedCell(item.DiscountRate.ToString()));
 
                 decimal total = item.Quantity * item.Product.UnitPrice;
-
-                decimal discount = order.DiscountRate != 0 && order.DiscountRate != null ?
-                                   total * ((decimal)item.DiscountRate / 100)
-                                   : 0;
-
+                decimal discount = (order.DiscountRate ?? 0) != 0
+                    ? total * ((decimal)order.DiscountRate.Value / 100)
+                    : 0;
                 decimal totalNet = total - discount;
 
-                row.Cells.Add(CreateBorderedCell(total.ToString("C")));
-                row.Cells.Add(CreateBorderedCell(totalNet.ToString("C")));
+                row.Cells.Add(CreateBorderedCell(total.ToString("C", usCulture)));
+                row.Cells.Add(CreateBorderedCell(totalNet.ToString("C", usCulture)));
 
                 trg.Rows.Add(row);
             }
 
-            // Total Summary
-            decimal Remisetotal = (decimal)order.DiscountRate;
-            doc.Blocks.Add(new Paragraph(new Run($"\nRemise : {Remisetotal:C}%"))
+            decimal remiseTotal = (decimal)(order.DiscountRate ?? 0);
+            decimal orderTotal = (decimal)order.Total;
+            decimal totalAmount = (decimal)order.TotalNet;
+
+            doc.Blocks.Add(new Paragraph(new Run($"\nRemise : {remiseTotal}%"))
             {
                 FontWeight = FontWeights.Bold,
                 FontSize = 16,
                 Margin = new Thickness(0, 5, 0, 0)
             });
 
-            decimal Ordertotal = (decimal)order.Total;
-            doc.Blocks.Add(new Paragraph(new Run($"\nTotal : {Ordertotal:C}"))
+            doc.Blocks.Add(new Paragraph(new Run($"\nTotal : {orderTotal.ToString("C", usCulture)}"))
             {
                 FontWeight = FontWeights.Bold,
                 FontSize = 16,
                 Margin = new Thickness(0, 8, 0, 0)
             });
 
-            decimal totalAmount = (decimal)order.TotalNet;
-            doc.Blocks.Add(new Paragraph(new Run($"\nTotal Amount: {totalAmount:C}"))
+            doc.Blocks.Add(new Paragraph(new Run($"\nTotal Amount: {totalAmount.ToString("C", usCulture)}"))
             {
                 FontWeight = FontWeights.Bold,
                 FontSize = 16,

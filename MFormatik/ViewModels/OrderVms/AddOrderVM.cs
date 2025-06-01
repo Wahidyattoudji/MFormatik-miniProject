@@ -128,20 +128,6 @@ namespace MFormatik.ViewModels.OrderVms
             ClearData();
         }
 
-        private void ParentPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(DiscountRate))
-            {
-                CalculateValues();
-            }
-        }
-
-        private void CalculateValues()
-        {
-            Total = OrderCalculationHelper.CalculateTotal(FinalProductLines.Select(pl => pl.NetPrice));
-            TotalNet = OrderCalculationHelper.CalculateTotalNet((decimal)Total, (decimal)DiscountRate!);
-        }
-
         private async void SaveOrder()
         {
             CalculateValues();
@@ -164,6 +150,7 @@ namespace MFormatik.ViewModels.OrderVms
             var result = await _mediator.OrderService.CreateOrderAsync(newOrder);
             MsgHelper.ShowInformation("La commande a été validée", "Ajouter une information");
             ClearData();
+            EventDispatcher.Notify("ReloadOrdersList");
             CloseWindow();
         }
 
@@ -232,16 +219,6 @@ namespace MFormatik.ViewModels.OrderVms
 
         private async Task LoadClients() => ClientsList = await _mediator.ClientService.GetAllClientsASDtoAsync();
 
-        private void ClearData()
-        {
-            SelectedClient = null;
-            SelectedProduct = null;
-            Total = 0;
-            OrderDate = default;
-            OrderItems.Clear();
-            IsAddProductVisible = Visibility.Collapsed;
-        }
-
         public void UpdatePositions()
         {
             for (int i = 0; i < TempProductLines.Count; i++)
@@ -251,7 +228,19 @@ namespace MFormatik.ViewModels.OrderVms
                 FinalProductLines[i].Position = i + 1;
         }
 
-        private void CloseWindow() => Closeable?.Close();
+        private void ParentPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(DiscountRate))
+            {
+                CalculateValues();
+            }
+        }
+
+        private void CalculateValues()
+        {
+            Total = OrderCalculationHelper.CalculateTotal(FinalProductLines.Select(pl => pl.NetPrice));
+            TotalNet = OrderCalculationHelper.CalculateTotalNet((decimal)Total, (decimal)DiscountRate!);
+        }
 
         #region Favorites Manipulation
         private void Chcekfavorite()
@@ -279,5 +268,16 @@ namespace MFormatik.ViewModels.OrderVms
             EventDispatcher.Notify("RefreshFavorites");
         }
         #endregion
+        private void ClearData()
+        {
+            SelectedClient = null;
+            SelectedProduct = null;
+            Total = 0;
+            OrderDate = default;
+            OrderItems.Clear();
+            IsAddProductVisible = Visibility.Collapsed;
+        }
+
+        private void CloseWindow() => Closeable?.Close();
     }
 }
