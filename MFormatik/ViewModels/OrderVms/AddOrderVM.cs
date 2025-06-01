@@ -7,6 +7,7 @@ using MFormatik.Helpers;
 using MFormatik.Services.Abstracts;
 using MFormatik.ViewModels.ProductVms;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -121,37 +122,50 @@ namespace MFormatik.ViewModels.OrderVms
             EventDispatcher.Subscribe("RefreshValues", RefreshValues);
             EventDispatcher.Subscribe("DeleteProduct", DeleteProduct);
             EventDispatcher.Subscribe("ValidateProduct", ValidateProduct);
+            PropertyChanged += ParentPropertyChanged;
             Chcekfavorite();
             LoadData();
             ClearData();
         }
 
-        #region Favorites Manipulation
-        private void Chcekfavorite()
+        private void ParentPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            var favoriteslist = FavoritesService.LoadFavorites();
-            if (favoriteslist.Any(f => f.ViewName == "AddOrderView"))
+            if (e.PropertyName == nameof(DiscountRate))
             {
-                IsInFavorite = true;
+                CalculateValues();
             }
         }
 
-        private void AddTofavorite()
+        private void CalculateValues()
         {
-            FavoritesService.AddFavorite(new FavoriteView
-            {
-                ViewName = "AddOrderView",
-                ViewTitle = "Nouvelle Commande",
-            });
-            EventDispatcher.Notify("RefreshFavorites");
+            Total = OrderCalculationHelper.CalculateTotal(FinalProductLines.Select(pl => pl.NetPrice));
+            TotalNet = OrderCalculationHelper.CalculateTotalNet((decimal)Total, (decimal)DiscountRate!);
         }
 
-        private void RemoveFromFavorite()
+        private async void SaveOrder()
         {
-            FavoritesService.RemoveFavorite(nameof(Closeable));
-            EventDispatcher.Notify("RefreshFavorites");
+            CalculateValues();
+            var newOrder = new Order
+            {
+                ClientId = SelectedClient?.Id ?? 0,
+                OrderDate = DateTime.Now,
+                DiscountRate = DiscountRate ?? 0,
+                Total = Total,
+                TotalNet = TotalNet,
+                OrderItems = FinalProductLines.Select(pl => new OrderItem
+                {
+                    ProductId = pl.SelectedProduct?.Id ?? 0,
+                    Quantity = pl.Quantity,
+                    UnitPrice = pl.UnitPrice,
+                    DiscountRate = pl.DiscountRate,
+                    Position = pl.Position
+                }).ToList()
+            };
+            var result = await _mediator.OrderService.CreateOrderAsync(newOrder);
+            MsgHelper.ShowInformation("La commande a été validée", "Ajouter une information");
+            ClearData();
+            CloseWindow();
         }
-        #endregion
 
         private void OnDrop(DropInfo dropInfo)
         {
@@ -182,6 +196,7 @@ namespace MFormatik.ViewModels.OrderVms
             if (obj is ProductLineViewModel newLine && TempProductLines.Contains(newLine))
             {
                 FinalProductLines.Add(newLine);
+                CalculateValues();
                 UpdatePositions();
                 OnPropertyChanged(nameof(TempProductLines));
             }
@@ -193,6 +208,7 @@ namespace MFormatik.ViewModels.OrderVms
             {
                 TempProductLines.Remove(LineToDelete);
                 FinalProductLines.Remove(LineToDelete);
+                CalculateValues();
                 UpdatePositions();
                 OnPropertyChanged(nameof(FinalProductLines));
             }
@@ -201,12 +217,6 @@ namespace MFormatik.ViewModels.OrderVms
         private void RefreshValues(object obj)
         {
             CalculateValues();
-        }
-
-        private void CalculateValues()
-        {
-            Total = OrderCalculationHelper.CalculateTotal(FinalProductLines.Select(pl => pl.UnitPrice));
-            TotalNet = OrderCalculationHelper.CalculateTotalNet((decimal)Total, (decimal)DiscountRate!);
         }
 
         private async void LoadData()
@@ -241,32 +251,31 @@ namespace MFormatik.ViewModels.OrderVms
 
         private void CloseWindow() => Closeable?.Close();
 
-        private async void SaveOrder()
+        #region Favorites Manipulation
+        private void Chcekfavorite()
         {
-            //var total = OrderCalculationHelper.CalculateTotal(ProductLines.Select(pl => pl.UnitPrice));
-            //var totalNet = OrderCalculationHelper.CalculateTotalNet(total, (decimal)DiscountRate);
-
-            var newOrder = new Order
+            var favoriteslist = FavoritesService.LoadFavorites();
+            if (favoriteslist.Any(f => f.ViewName == "AddOrderView"))
             {
-                ClientId = SelectedClient?.Id ?? 0,
-                OrderDate = DateTime.Now,
-                DiscountRate = DiscountRate ?? 0,
-                Total = Total,
-                TotalNet = TotalNet,
-                OrderItems = FinalProductLines.Select(pl => new OrderItem
-                {
-                    ProductId = pl.SelectedProduct?.Id ?? 0,
-                    Quantity = pl.Quantity,
-                    UnitPrice = pl.UnitPrice,
-                    DiscountRate = pl.DiscountRate,
-                    Position = pl.Position
-                }).ToList()
-            };
-
-            var result = await _mediator.OrderService.CreateOrderAsync(newOrder);
-            MsgHelper.ShowInformation("La commande a été validée", "Ajouter une information");
-            ClearData();
-            CloseWindow();
+                IsInFavorite = true;
+            }
         }
+
+        private void AddTofavorite()
+        {
+            FavoritesService.AddFavorite(new FavoriteView
+            {
+                ViewName = "AddOrderView",
+                ViewTitle = "Nouvelle Commande",
+            });
+            EventDispatcher.Notify("RefreshFavorites");
+        }
+
+        private void RemoveFromFavorite()
+        {
+            FavoritesService.RemoveFavorite(nameof(Closeable));
+            EventDispatcher.Notify("RefreshFavorites");
+        }
+        #endregion
     }
 }

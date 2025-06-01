@@ -48,7 +48,7 @@
             IsEnabled="{Binding IsEnable, Mode=TwoWay}"
             Style="{StaticResource TextBox.Normal}"
             Tag="Prix uni"
-            Text="{Binding ProductUnitPrice, TargetNullValue=0, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding ProductUnitPrice, StringFormat=F2, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
         <TextBox
             Grid.Column="3"
             Height="30"
@@ -57,7 +57,7 @@
             IsEnabled="{Binding IsEnable, Mode=TwoWay}"
             Style="{StaticResource TextBox.Normal}"
             Tag="Quantité"
-            Text="{Binding Quantity, TargetNullValue=0, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding Quantity, TargetNullValue=0, StringFormat=F2, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             Grid.Column="4"
             Height="30"
@@ -66,7 +66,7 @@
             IsEnabled="{Binding IsEnable, Mode=TwoWay}"
             Style="{StaticResource TextBox.Normal}"
             Tag="Remise %"
-            Text="{Binding DiscountRate, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding DiscountRate, StringFormat=F2, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             Grid.Column="5"
             Height="30"
@@ -75,7 +75,7 @@
             IsReadOnly="True"
             Style="{StaticResource TextBox.Normal}"
             Tag="Montant"
-            Text="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding UnitPrice, StringFormat=F2, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             Grid.Column="6"
             Height="30"
@@ -84,7 +84,7 @@
             IsReadOnly="True"
             Style="{StaticResource TextBox.Normal}"
             Tag="Montant net"
-            Text="{Binding NetPrice, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+            Text="{Binding NetPrice, StringFormat=F2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
         <Button
             Grid.Column="7"
             Margin="0,0,5,0"
