@@ -14,8 +14,6 @@ namespace MFormatik.Views.OrderViews
             InitializeComponent();
             DataContext = addOrderVM;
             addOrderVM.Closeable = this;
-            addOrderVM.CurentViewTitle = nameof(AddOrderView);
-
             Owner = App.Current.MainWindow;
         }
     }

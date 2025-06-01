@@ -61,7 +61,7 @@ namespace MFormatik.ViewModels
 
         private void OpenFavWindow(string viewName)
         {
-            var viewType = Type.GetType($"MFormatik.Views.{viewName}");
+            var viewType = Type.GetType($"MFormatik.Views.OrderViews.{viewName}");
             if (viewType == null)
             {
                 MessageBox.Show($"Cant Find {viewName}");

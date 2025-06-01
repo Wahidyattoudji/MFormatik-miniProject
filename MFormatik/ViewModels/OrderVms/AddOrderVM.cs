@@ -85,8 +85,6 @@ namespace MFormatik.ViewModels.OrderVms
             }
         }
 
-        public string CurentViewTitle { get; set; }
-
         private Visibility _isAddProductVisible;
         public Visibility IsAddProductVisible
         {
@@ -128,10 +126,11 @@ namespace MFormatik.ViewModels.OrderVms
             ClearData();
         }
 
+        #region Favorites Manipulation
         private void Chcekfavorite()
         {
             var favoriteslist = FavoritesService.LoadFavorites();
-            if (favoriteslist.Any(f => f.ViewName == CurentViewTitle))
+            if (favoriteslist.Any(f => f.ViewName == "AddOrderView"))
             {
                 IsInFavorite = true;
             }
@@ -141,7 +140,7 @@ namespace MFormatik.ViewModels.OrderVms
         {
             FavoritesService.AddFavorite(new FavoriteView
             {
-                ViewName = CurentViewTitle,
+                ViewName = "AddOrderView",
                 ViewTitle = "Nouvelle Commande",
             });
             EventDispatcher.Notify("RefreshFavorites");
@@ -152,7 +151,7 @@ namespace MFormatik.ViewModels.OrderVms
             FavoritesService.RemoveFavorite(nameof(Closeable));
             EventDispatcher.Notify("RefreshFavorites");
         }
-
+        #endregion
 
         private void OnDrop(DropInfo dropInfo)
         {
