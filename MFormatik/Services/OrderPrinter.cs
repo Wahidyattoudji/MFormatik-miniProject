@@ -7,13 +7,23 @@ using System.Windows.Media;
 
 namespace MFormatik.Services
 {
-
     public class OrderPrinter : IOrderPrinter
     {
         public void Print(Order order)
         {
             if (order == null) throw new ArgumentNullException(nameof(order));
 
+            FlowDocument doc = CreateFlowDocument(order);
+
+            PrintDialog pd = new PrintDialog();
+            if (pd.ShowDialog() == true)
+            {
+                IDocumentPaginatorSource idpSource = doc;
+                pd.PrintDocument(idpSource.DocumentPaginator, $"Order {order.Id}");
+            }
+        }
+        private FlowDocument CreateFlowDocument(Order order)
+        {
             FlowDocument doc = new FlowDocument
             {
                 PagePadding = new Thickness(50),
@@ -21,6 +31,7 @@ namespace MFormatik.Services
                 FontSize = 12,
                 ColumnWidth = double.PositiveInfinity
             };
+
             // Title
             Paragraph title = new Paragraph(new Run($"Order Receipt - {order.Id}"))
             {
@@ -34,55 +45,94 @@ namespace MFormatik.Services
             // Client Details
             doc.Blocks.Add(new Paragraph(new Run($"Client: {order.Client.FullName}")));
             doc.Blocks.Add(new Paragraph(new Run($"Order Date: {order.OrderDate:d}")));
-            doc.Blocks.Add(new Paragraph(new Run(" "))); // Spacer
+            doc.Blocks.Add(new Paragraph(new Run(" ")));
 
             // Table for Order Items
-            Table table = new Table();
+            Table table = new Table
+            {
+                CellSpacing = 0, // مهم لإظهار الحدود بشكل متواصل
+                BorderBrush = Brushes.Black,
+                BorderThickness = new Thickness(1)
+            };
             doc.Blocks.Add(table);
 
             // Define columns
-            table.Columns.Add(new TableColumn { Width = new GridLength(200) });
-            table.Columns.Add(new TableColumn { Width = new GridLength(100) });
-            table.Columns.Add(new TableColumn { Width = new GridLength(100) });
-            table.Columns.Add(new TableColumn { Width = new GridLength(100) });
+            for (int i = 0; i < 6; i++)
+                table.Columns.Add(new TableColumn { Width = new GridLength(i == 0 ? 200 : 100) });
 
-            // Add header row
             TableRowGroup trg = new TableRowGroup();
             table.RowGroups.Add(trg);
 
+            // Header
             TableRow header = new TableRow();
-            header.Cells.Add(new TableCell(new Paragraph(new Run("Product"))) { FontWeight = FontWeights.Bold });
-            header.Cells.Add(new TableCell(new Paragraph(new Run("Quantity"))) { FontWeight = FontWeights.Bold });
-            header.Cells.Add(new TableCell(new Paragraph(new Run("Unit Price"))) { FontWeight = FontWeights.Bold });
-            header.Cells.Add(new TableCell(new Paragraph(new Run("Total"))) { FontWeight = FontWeights.Bold });
+            string[] headers = { "Article", "Prix unitaire", "Quantité", "Remise %", "Montant", "Montant net" };
+            foreach (var h in headers)
+            {
+                header.Cells.Add(CreateBorderedCell(h, FontWeights.Bold));
+            }
             trg.Rows.Add(header);
 
-            // Add order items
+            // Rows
             foreach (var item in order.OrderItems)
             {
                 TableRow row = new TableRow();
-                row.Cells.Add(new TableCell(new Paragraph(new Run(item.Product.Name))));
-                row.Cells.Add(new TableCell(new Paragraph(new Run(item.Quantity.ToString()))));
-                row.Cells.Add(new TableCell(new Paragraph(new Run(item.UnitPrice.ToString("C")))));
-                row.Cells.Add(new TableCell(new Paragraph(new Run(item.Position.ToString("C")))));
+                row.Cells.Add(CreateBorderedCell(item.Product.Name));
+                row.Cells.Add(CreateBorderedCell(item.Product.UnitPrice.ToString()));
+                row.Cells.Add(CreateBorderedCell(item.Quantity.ToString()));
+                row.Cells.Add(CreateBorderedCell(item.DiscountRate.ToString()));
+
+                decimal total = item.Quantity * item.Product.UnitPrice;
+
+                decimal discount = order.DiscountRate != 0 && order.DiscountRate != null ?
+                                   total * ((decimal)item.DiscountRate / 100)
+                                   : 0;
+
+                decimal totalNet = total - discount;
+
+                row.Cells.Add(CreateBorderedCell(total.ToString("C")));
+                row.Cells.Add(CreateBorderedCell(totalNet.ToString("C")));
+
                 trg.Rows.Add(row);
             }
 
             // Total Summary
+            decimal Remisetotal = (decimal)order.DiscountRate;
+            doc.Blocks.Add(new Paragraph(new Run($"\nRemise : {Remisetotal:C}%"))
+            {
+                FontWeight = FontWeights.Bold,
+                FontSize = 16,
+                Margin = new Thickness(0, 5, 0, 0)
+            });
+
+            decimal Ordertotal = (decimal)order.Total;
+            doc.Blocks.Add(new Paragraph(new Run($"\nTotal : {Ordertotal:C}"))
+            {
+                FontWeight = FontWeights.Bold,
+                FontSize = 16,
+                Margin = new Thickness(0, 8, 0, 0)
+            });
+
             decimal totalAmount = (decimal)order.TotalNet;
             doc.Blocks.Add(new Paragraph(new Run($"\nTotal Amount: {totalAmount:C}"))
             {
                 FontWeight = FontWeights.Bold,
-                FontSize = 14
+                FontSize = 16,
+                Foreground = Brushes.DarkGreen,
+                Margin = new Thickness(0, 0, 0, 0)
             });
 
-            // Print Dialog
-            PrintDialog pd = new PrintDialog();
-            if (pd.ShowDialog() == true)
+            return doc;
+        }
+
+        private TableCell CreateBorderedCell(string text, FontWeight fontWeight = default)
+        {
+            return new TableCell(new Paragraph(new Run(text)))
             {
-                IDocumentPaginatorSource idpSource = doc;
-                pd.PrintDocument(idpSource.DocumentPaginator, $"Order {order.Id}");
-            }
+                BorderBrush = Brushes.Black,
+                BorderThickness = new Thickness(1),
+                FontWeight = fontWeight == default ? FontWeights.Normal : fontWeight,
+                Padding = new Thickness(5)
+            };
         }
     }
 }

@@ -8,10 +8,10 @@
     xmlns:ordervms="clr-namespace:MFormatik.ViewModels.OrderVms"
     xmlns:uc="clr-namespace:MFormatik.Views.ProductViews"
     Title="AddOrderView"
-    ResizeMode="NoResize"
     Width="850"
     Height="730"
     d:DataContext="{d:DesignInstance Type=ordervms:AddOrderVM}"
+    ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Grid>
@@ -39,7 +39,7 @@
                     Height="38"
                     IsEnabled="False"
                     Style="{DynamicResource Icon.Only.UniformToFill}"
-                    Tag="{DynamicResource Add.DataBase}" />
+                    Tag="{DynamicResource Save.Plus}" />
                 <TextBlock
                     Padding="20,18"
                     FontSize="28"
@@ -229,7 +229,7 @@
                 Content="Valide"
                 FlowDirection="RightToLeft"
                 Style="{DynamicResource Icon.Green}"
-                Tag="{StaticResource Edit.DataBase}" />
+                Tag="{StaticResource Save.Done}" />
             <Button
                 Width="90"
                 Height="35"
