@@ -273,7 +273,7 @@ namespace MFormatik.ViewModels.OrderVms
 
         private void RemoveFromFavorite()
         {
-            FavoritesService.RemoveFavorite(nameof(Closeable));
+            FavoritesService.RemoveFavorite("AddOrderView");
             EventDispatcher.Notify("RefreshFavorites");
         }
         #endregion

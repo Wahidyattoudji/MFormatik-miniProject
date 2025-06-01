@@ -3,6 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Behavior="clr-namespace:MFormatik.Helpers"
+    xmlns:Converter="clr-namespace:MFormatik.Converters"
+    xmlns:Validation="clr-namespace:MFormatik.Validations"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:MFormatik.Views.OrderViews"
@@ -16,6 +18,11 @@
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <Window.Resources>
+        <Validation:TextBoxValidationRule x:Key="TextBoxValidation" />
+        <Validation:NumericValidationRule x:Key="PhoneNumberValidationRule" />
+        <Converter:ValidationAndEmptyMultiConverter x:Key="ValidationAndEmptyMultiConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -272,7 +279,15 @@
                 Content="Valide"
                 FlowDirection="RightToLeft"
                 Style="{DynamicResource Icon.Green}"
-                Tag="{StaticResource Save.Done}" />
+                Tag="{StaticResource Save.Done}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource ValidationAndEmptyMultiConverter}">
+                        <Binding ElementName="ClientCB" Path="SelectedItem" />
+                        <Binding ElementName="ClientCB" Path="SelectedValue" />
+                        <Binding ElementName="ClientCB" Path="(Validation.HasError)" />
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
             <Button
                 Width="90"
                 Height="35"
