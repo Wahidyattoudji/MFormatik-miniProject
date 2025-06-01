@@ -3,6 +3,7 @@
   <ItemGroup>
     <None Remove="app.config" />
     <None Remove="Assets\Logo.png" />
+    <None Remove="FavoritesConfig.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +29,12 @@
     <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="FavoritesConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <PropertyGroup>

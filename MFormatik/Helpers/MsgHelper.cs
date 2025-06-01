@@ -48,5 +48,4 @@ namespace MFormatik.Helpers
             MessageBox.Show($" {msg} ", $"Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
     }
-
 }

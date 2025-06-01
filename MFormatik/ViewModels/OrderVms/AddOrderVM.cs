@@ -67,12 +67,24 @@ namespace MFormatik.ViewModels.OrderVms
         public ObservableCollection<ProductLineViewModel> FinalProductLines { get; set; } = new ObservableCollection<ProductLineViewModel>();
         public ObservableCollection<ProductLineViewModel> TempProductLines { get; set; } = new ObservableCollection<ProductLineViewModel>();
 
-
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
         public ICommand AddProductCommand { get; }
-
+        public ICommand AddToFavoriteCommand { get; }
+        public ICommand RemoveFavoriteCommand { get; }
         public ICloseable Closeable { get; set; }
+
+        private bool _isInFavorite;
+        public bool IsInFavorite
+        {
+            get => _isInFavorite;
+            set
+            {
+                if (_isInFavorite == value) return;
+                _isInFavorite = value;
+            }
+        }
+
         private Visibility _isAddProductVisible;
         public Visibility IsAddProductVisible
         {
@@ -85,7 +97,7 @@ namespace MFormatik.ViewModels.OrderVms
             }
         }
 
-
+        // Darag and Drop functionality
         public ICommand DropCommand { get; }
         public ProductLineViewModel DragData { get; set; }
 
@@ -98,18 +110,45 @@ namespace MFormatik.ViewModels.OrderVms
             _productList = new ObservableCollection<Product>();
             OrderItems = new ObservableCollection<OrderItem>();
 
-            SaveCommand = new RelayCommand(() => SaveOrder());
+            SaveCommand = new RelayCommand(SaveOrder);
             CancelCommand = new RelayCommand(CloseWindow);
             AddProductCommand = new RelayCommand(AddProductToOrder);
             DropCommand = new RelayCommand<DropInfo>(OnDrop);
 
+            AddToFavoriteCommand = new RelayCommand(AddTofavorite);
+            RemoveFavoriteCommand = new RelayCommand(RemoveFromFavorite);
+
             EventDispatcher.Subscribe("RefreshValues", RefreshValues);
             EventDispatcher.Subscribe("DeleteProduct", DeleteProduct);
             EventDispatcher.Subscribe("ValidateProduct", ValidateProduct);
-
+            Chcekfavorite();
             LoadData();
             ClearData();
         }
+
+        private void Chcekfavorite()
+        {
+            var favoriteslist = FavoritesService.LoadFavorites();
+            if (favoriteslist.Any(f => f.ViewName == nameof(Closeable)))
+            {
+                IsInFavorite = true;
+            }
+        }
+
+        private void AddTofavorite()
+        {
+            FavoritesService.AddFavorite(new FavoriteView
+            {
+                ViewName = nameof(Closeable),
+                ViewTitle = "Add Order",
+            });
+        }
+
+        private void RemoveFromFavorite()
+        {
+            FavoritesService.RemoveFavorite(nameof(Closeable));
+        }
+
 
         private void OnDrop(DropInfo dropInfo)
         {
@@ -199,7 +238,7 @@ namespace MFormatik.ViewModels.OrderVms
 
         private void CloseWindow() => Closeable?.Close();
 
-        private async Task SaveOrder()
+        private async void SaveOrder()
         {
             //var total = OrderCalculationHelper.CalculateTotal(ProductLines.Select(pl => pl.UnitPrice));
             //var totalNet = OrderCalculationHelper.CalculateTotalNet(total, (decimal)DiscountRate);
