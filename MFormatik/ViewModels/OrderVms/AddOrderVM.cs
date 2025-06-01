@@ -143,7 +143,7 @@ namespace MFormatik.ViewModels.OrderVms
         }
 
 
-        private void CheckIfallProductsAreValidated()
+        private void IsAllProductsAreValidated()
         {
             IsSaveButtonEnble = SelectedClient != null && (TempProductLines.Count == FinalProductLines.Count);
         }
@@ -196,7 +196,7 @@ namespace MFormatik.ViewModels.OrderVms
             var newOrderItem = new OrderItem { Quantity = 1 };
             var newLine = new ProductLineViewModel(newOrderItem, ProductsList) { Position = TempProductLines.Count + 1 };
             TempProductLines.Add(newLine);
-            CheckIfallProductsAreValidated();
+            IsAllProductsAreValidated();
         }
 
         private void ValidateProduct(object obj)
@@ -261,7 +261,7 @@ namespace MFormatik.ViewModels.OrderVms
         {
             Total = OrderCalculationHelper.CalculateTotal(FinalProductLines.Select(pl => pl.NetPrice));
             TotalNet = OrderCalculationHelper.CalculateTotalNet((decimal)Total, (decimal)DiscountRate!);
-            CheckIfallProductsAreValidated();
+            IsAllProductsAreValidated();
         }
 
         #region Favorites Manipulation
