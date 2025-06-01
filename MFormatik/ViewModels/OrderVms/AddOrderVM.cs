@@ -26,7 +26,9 @@ namespace MFormatik.ViewModels.OrderVms
             {
                 if (_selectedClient == value) return;
                 _selectedClient = value;
+                _isAddProductVisible = true;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsAddProductVisible));
             }
         }
         public Product SelectedProduct
@@ -65,6 +67,19 @@ namespace MFormatik.ViewModels.OrderVms
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
         public ICommand AddProductCommand { get; }
+
+        private bool _isAddProductVisible = false;
+        public bool IsAddProductVisible
+        {
+            get => _isAddProductVisible;
+            set
+            {
+                if (_isAddProductVisible == value) return;
+                _isAddProductVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
 
 
         public AddOrderVM(IMediator mediator)

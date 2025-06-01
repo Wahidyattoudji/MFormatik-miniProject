@@ -9,7 +9,7 @@
     xmlns:uc="clr-namespace:MFormatik.Views.ProductViews"
     Title="AddOrderView"
     Width="850"
-    Height="730"
+    Height="750"
     d:DataContext="{d:DesignInstance Type=ordervms:AddOrderVM}"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -97,7 +97,8 @@
                 Background="White"
                 BorderBrush="{DynamicResource VisaBOT.DarkBlue}"
                 BorderThickness="1"
-                CornerRadius="10">
+                CornerRadius="10"
+                Visibility="{Binding IsAddProductVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -128,9 +129,27 @@
                         Command="{Binding AddProductCommand}"
                         Style="{StaticResource Icon.blue}"
                         Tag="{StaticResource Plus}" />
+                    <Border
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Padding="2"
+                        Background="LightGray"
+                        CornerRadius="5">
+                        <StackPanel Margin="38,0,0,0" Orientation="Horizontal">
+                            <TextBlock Margin="0,0,104,0" Text="Article" />
+                            <TextBlock Margin="0,0,48,0" Text="Prix unitaire" />
+                            <TextBlock Margin="0,0,60,0" Text="Quantité" />
+                            <TextBlock Margin="0,0,55,0" Text="Remise %" />
+                            <TextBlock Margin="0,0,60,0" Text="Montant" />
+                            <TextBlock Margin="0,0,5,0" Text="Montant Net" />
+                        </StackPanel>
+                    </Border>
+
                     <!--  Product list  -->
                     <ListBox
-                        Grid.Row="1"
+                        Grid.Row="2"
                         Grid.Column="0"
                         Grid.ColumnSpan="2"
                         Height="250"
