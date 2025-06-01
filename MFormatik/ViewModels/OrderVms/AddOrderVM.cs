@@ -137,11 +137,10 @@ namespace MFormatik.ViewModels.OrderVms
             EventDispatcher.Subscribe("DeleteProduct", DeleteProduct);
             EventDispatcher.Subscribe("ValidateProduct", ValidateProduct);
             PropertyChanged += ParentPropertyChanged;
-            Chcekfavorite();
+            Checkfavorite();
             LoadData();
             ClearData();
         }
-
 
         private void IsAllProductsAreValidated()
         {
@@ -265,7 +264,7 @@ namespace MFormatik.ViewModels.OrderVms
         }
 
         #region Favorites Manipulation
-        private void Chcekfavorite()
+        private void Checkfavorite()
         {
             var favoriteslist = FavoritesService.LoadFavorites();
             if (favoriteslist.Any(f => f.ViewName == "AddOrderView"))
