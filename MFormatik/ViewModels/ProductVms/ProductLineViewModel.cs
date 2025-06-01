@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using MFormatik.Application.Helpers;
 using MFormatik.Core.Models;
+using System.Windows;
 using System.Windows.Input;
 
 namespace MFormatik.ViewModels.ProductVms
@@ -28,7 +29,7 @@ namespace MFormatik.ViewModels.ProductVms
                 }
             }
         }
-
+        // Product
         public string ProductName => SelectedProduct?.Name ?? "No Product";
         public decimal ProductUnitPrice
         {
@@ -50,7 +51,7 @@ namespace MFormatik.ViewModels.ProductVms
                 OnPropertyChanged(nameof(ProductName));
             }
         }
-
+        // OrderItem
         public int Quantity
         {
             get => OrderItem.Quantity;
@@ -97,20 +98,40 @@ namespace MFormatik.ViewModels.ProductVms
                 OnPropertyChanged(nameof(Position));
             }
         }
-
-        // 
         public decimal NetPrice
         {
+            get => OrderCalculationHelper.CalculateNetAmount(UnitPrice, DiscountRate ?? 0);
             set
             {
                 NetPrice = value;
                 OnPropertyChanged(nameof(NetPrice));
             }
-            get
+        }
+
+        private Visibility _isValidateButtonVisible;
+        public Visibility IsValidateButtonVisible
+        {
+            get => _isValidateButtonVisible;
+            set
             {
-                return OrderCalculationHelper.CalculateNetAmount(UnitPrice, DiscountRate ?? 0);
+                if (_isValidateButtonVisible == value) return;
+                _isValidateButtonVisible = value;
+                OnPropertyChanged();
             }
         }
+
+        private bool _isEnable;
+        public bool IsEnable
+        {
+            get => _isEnable;
+            set
+            {
+                if (_isEnable == value) return;
+                _isEnable = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public ICommand ValidateProductCommand { get; }
         public ICommand DeleteProductCommand { get; }
@@ -125,9 +146,16 @@ namespace MFormatik.ViewModels.ProductVms
 
             _selectedProduct = new();
             _selectedProduct = Products.FirstOrDefault(p => p.Id == OrderItem.ProductId);
+            IsEnable = true;
         }
 
-        private void ValidateProduct() => EventDispatcher.Notify("ValidateProduct", this);
+        private void ValidateProduct()
+        {
+            EventDispatcher.Notify("ValidateProduct", this);
+            IsValidateButtonVisible = Visibility.Collapsed;
+            IsEnable = false;
+        }
+
         private void DeleteProduct() => EventDispatcher.Notify("DeleteProduct", this);
         private void NotifyViewModel() => EventDispatcher.Notify("RefreshValues");
     }

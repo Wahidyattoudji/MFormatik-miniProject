@@ -6,6 +6,7 @@ using MFormatik.Core.Models;
 using MFormatik.Helpers;
 using MFormatik.ViewModels.ProductVms;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace MFormatik.ViewModels.OrderVms
@@ -26,7 +27,7 @@ namespace MFormatik.ViewModels.OrderVms
             {
                 if (_selectedClient == value) return;
                 _selectedClient = value;
-                _isAddProductVisible = true;
+                _isAddProductVisible = Visibility.Visible;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsAddProductVisible));
             }
@@ -62,14 +63,16 @@ namespace MFormatik.ViewModels.OrderVms
             }
         }
 
-        public ObservableCollection<ProductLineViewModel> ProductLines { get; set; } = new ObservableCollection<ProductLineViewModel>();
+        public ObservableCollection<ProductLineViewModel> FinalProductLines { get; set; } = new ObservableCollection<ProductLineViewModel>();
+        public ObservableCollection<ProductLineViewModel> TempProductLines { get; set; } = new ObservableCollection<ProductLineViewModel>();
+
 
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
         public ICommand AddProductCommand { get; }
 
-        private bool _isAddProductVisible = false;
-        public bool IsAddProductVisible
+        private Visibility _isAddProductVisible;
+        public Visibility IsAddProductVisible
         {
             get => _isAddProductVisible;
             set
@@ -85,7 +88,6 @@ namespace MFormatik.ViewModels.OrderVms
         public AddOrderVM(IMediator mediator)
         {
             _mediator = mediator;
-
             _selectedClient = new();
             _selectedProduct = new();
             _clientsList = new ObservableCollection<ClientDTO>();
@@ -108,25 +110,31 @@ namespace MFormatik.ViewModels.OrderVms
             _mediator.Unsubscribe("RefrshValues", RefreshValues);
         }
 
-        private void ValidateProduct(object obj)
-        {
-            throw new NotImplementedException();
-        }
-
         private void AddProductToOrder()
         {
             var newOrderItem = new OrderItem { Quantity = 1 };
-            var newLine = new ProductLineViewModel(newOrderItem, ProductsList) { Position = ProductLines.Count + 1 };
-            ProductLines.Add(newLine);
+            var newLine = new ProductLineViewModel(newOrderItem, ProductsList) { Position = TempProductLines.Count + 1 };
+            TempProductLines.Add(newLine);
+        }
+
+        private void ValidateProduct(object obj)
+        {
+            if (obj is ProductLineViewModel newLine && TempProductLines.Contains(newLine))
+            {
+                FinalProductLines.Add(newLine);
+                UpdatePositions();
+                OnPropertyChanged(nameof(TempProductLines));
+            }
         }
 
         private void DeleteProduct(object obj)
         {
-            if (obj is ProductLineViewModel LineToDelete && ProductLines.Contains(LineToDelete))
+            if (obj is ProductLineViewModel LineToDelete && FinalProductLines.Contains(LineToDelete))
             {
-                ProductLines.Remove(LineToDelete);
+                TempProductLines.Remove(LineToDelete);
+                FinalProductLines.Remove(LineToDelete);
                 UpdatePositions();
-                OnPropertyChanged(nameof(ProductLines));
+                OnPropertyChanged(nameof(FinalProductLines));
             }
         }
 
@@ -138,7 +146,7 @@ namespace MFormatik.ViewModels.OrderVms
 
         private void CalculateValues()
         {
-            Total = OrderCalculationHelper.CalculateTotal(ProductLines.Select(pl => pl.UnitPrice));
+            Total = OrderCalculationHelper.CalculateTotal(FinalProductLines.Select(pl => pl.UnitPrice));
             TotalNet = OrderCalculationHelper.CalculateTotalNet((decimal)Total, (decimal)DiscountRate!);
         }
 
@@ -146,6 +154,7 @@ namespace MFormatik.ViewModels.OrderVms
         {
             await LoadClients();
             await LoadProducts();
+            IsAddProductVisible = Visibility.Collapsed;
         }
 
         private async Task LoadProducts() => ProductsList = await _mediator.ProductService.GetAllProductsAsync();
@@ -159,17 +168,21 @@ namespace MFormatik.ViewModels.OrderVms
             Total = 0;
             OrderDate = default;
             OrderItems.Clear();
+            IsAddProductVisible = Visibility.Collapsed;
         }
 
         public void UpdatePositions()
         {
-            for (int i = 0; i < ProductLines.Count; i++)
-                ProductLines[i].Position = i + 1;
+            for (int i = 0; i < TempProductLines.Count; i++)
+                TempProductLines[i].Position = i + 1;
+
+            for (int i = 0; i < FinalProductLines.Count; i++)
+                FinalProductLines[i].Position = i + 1;
         }
 
         private void CloseWindow()
         {
-            // throw new NotImplementedException();
+
         }
 
         private async Task SaveOrder()
@@ -184,7 +197,7 @@ namespace MFormatik.ViewModels.OrderVms
                 DiscountRate = DiscountRate ?? 0,
                 Total = Total,
                 TotalNet = TotalNet,
-                OrderItems = ProductLines.Select(pl => new OrderItem
+                OrderItems = FinalProductLines.Select(pl => new OrderItem
                 {
                     ProductId = pl.SelectedProduct?.Id ?? 0,
                     Quantity = pl.Quantity,
@@ -195,8 +208,8 @@ namespace MFormatik.ViewModels.OrderVms
             };
 
             var result = await _mediator.OrderService.CreateOrderAsync(newOrder);
-            MsgHelper.ShowInformation(result.Message, "Add Info");
-
+            MsgHelper.ShowInformation("La commande a été validée", "Ajouter une information");
+            ClearData();
         }
     }
 }

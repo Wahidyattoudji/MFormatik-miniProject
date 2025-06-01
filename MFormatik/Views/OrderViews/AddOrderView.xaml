@@ -98,7 +98,7 @@
                 BorderBrush="{DynamicResource VisaBOT.DarkBlue}"
                 BorderThickness="1"
                 CornerRadius="10"
-                Visibility="{Binding IsAddProductVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Visibility="{Binding IsAddProductVisible, Mode=TwoWay}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -154,7 +154,7 @@
                         Grid.ColumnSpan="2"
                         Height="250"
                         AllowDrop="True"
-                        ItemsSource="{Binding ProductLines}"
+                        ItemsSource="{Binding TempProductLines}"
                         ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                         ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <ListBox.ItemTemplate>
