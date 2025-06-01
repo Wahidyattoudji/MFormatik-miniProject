@@ -157,7 +157,7 @@ namespace MFormatik.ViewModels.OrderVms
             DateFiltringCommand = new RelayCommand(DateFiltring);
             GroupByFiltringCommand = new RelayCommand(GroupByFiltring);
             SearchCommand = new RelayCommand(SearchOrder);
-            ReloadCommand = new RelayCommand(Reload);
+            ReloadCommand = new RelayCommand(() => Reload(null));
             #region Search Command Initial
             _searchTimer = new DispatcherTimer
             {
@@ -165,8 +165,13 @@ namespace MFormatik.ViewModels.OrderVms
             };
             _searchTimer.Tick += SearchTimer_Tick;
             #endregion
-            _mediator.Subscribe("ReloadOrdersList", _ => Reload());
+            _mediator.Subscribe("ReloadOrdersList", Reload);
             _initializeTask = new Lazy<Task>(() => LoadDataAsync());
+        }
+
+        private async void Reload(object obj)
+        {
+            await LoadDataAsync();
         }
 
         private void OpenAddOrderWindow()
@@ -208,7 +213,7 @@ namespace MFormatik.ViewModels.OrderVms
                     OrdersList = await _mediator.OrderService.GroupByTotalNetAsync();
                     break;
                 default:
-                    Reload();
+                    Reload(null);
                     return;
             }
             ShowEmptyDataGridMsg = DataGridHelper.IsEmpty(OrdersList);
@@ -252,11 +257,6 @@ namespace MFormatik.ViewModels.OrderVms
             OrdersList = await _mediator.OrderService.GetAllOrdersAsync();
             ShowEmptyDataGridMsg = DataGridHelper.IsEmpty(OrdersList);
             TotalOrders = OrdersList.Count;
-        }
-
-        public async void Reload()
-        {
-            await LoadDataAsync();
         }
 
         public async Task EnsureDataLoadedAsync() => await _initializeTask.Value;
