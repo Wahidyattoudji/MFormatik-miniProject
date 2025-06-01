@@ -277,16 +277,9 @@
                 Command="{Binding SaveCommand}"
                 Content="Valide"
                 FlowDirection="RightToLeft"
+                IsEnabled="{Binding IsSaveButtonEnble}"
                 Style="{DynamicResource Icon.Green}"
-                Tag="{StaticResource Save.Done}">
-                <Button.IsEnabled>
-                    <MultiBinding Converter="{StaticResource ValidationAndEmptyMultiConverter}">
-                        <Binding ElementName="ClientCB" Path="SelectedItem" />
-                        <Binding ElementName="ClientCB" Path="SelectedValue" />
-                        <Binding ElementName="ClientCB" Path="(Validation.HasError)" />
-                    </MultiBinding>
-                </Button.IsEnabled>
-            </Button>
+                Tag="{StaticResource Save.Done}" />
             <Button
                 Width="90"
                 Height="35"

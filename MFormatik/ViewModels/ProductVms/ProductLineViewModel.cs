@@ -132,7 +132,6 @@ namespace MFormatik.ViewModels.ProductVms
             }
         }
 
-
         public ICommand ValidateProductCommand { get; }
         public ICommand DeleteProductCommand { get; }
 

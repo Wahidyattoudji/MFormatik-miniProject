@@ -86,6 +86,18 @@ namespace MFormatik.ViewModels.OrderVms
             }
         }
 
+        private bool _isSaveButtonEnble;
+        public bool IsSaveButtonEnble
+        {
+            get => _isSaveButtonEnble;
+            set
+            {
+                if (_isSaveButtonEnble == value) return;
+                _isSaveButtonEnble = value;
+                OnPropertyChanged();
+            }
+        }
+
         private Visibility _isAddProductVisible;
         public Visibility IsAddProductVisible
         {
@@ -119,6 +131,8 @@ namespace MFormatik.ViewModels.OrderVms
             AddToFavoriteCommand = new RelayCommand(AddTofavorite);
             RemoveFavoriteCommand = new RelayCommand(RemoveFromFavorite);
 
+            IsSaveButtonEnble = false;
+
             EventDispatcher.Subscribe("RefreshValues", RefreshValues);
             EventDispatcher.Subscribe("DeleteProduct", DeleteProduct);
             EventDispatcher.Subscribe("ValidateProduct", ValidateProduct);
@@ -126,6 +140,12 @@ namespace MFormatik.ViewModels.OrderVms
             Chcekfavorite();
             LoadData();
             ClearData();
+        }
+
+
+        private void CheckIfallProductsAreValidated()
+        {
+            IsSaveButtonEnble = SelectedClient != null && (TempProductLines.Count == FinalProductLines.Count);
         }
 
         private async void SaveOrder()
@@ -150,7 +170,7 @@ namespace MFormatik.ViewModels.OrderVms
             var result = await _mediator.OrderService.CreateOrderAsync(newOrder);
             MsgHelper.ShowInformation("La commande a été validée", "Ajouter une information");
             ClearData();
-            EventDispatcher.Notify("ReloadOrdersList");
+            _mediator.Notify("ReloadOrdersList");
             CloseWindow();
         }
 
@@ -176,6 +196,7 @@ namespace MFormatik.ViewModels.OrderVms
             var newOrderItem = new OrderItem { Quantity = 1 };
             var newLine = new ProductLineViewModel(newOrderItem, ProductsList) { Position = TempProductLines.Count + 1 };
             TempProductLines.Add(newLine);
+            CheckIfallProductsAreValidated();
         }
 
         private void ValidateProduct(object obj)
@@ -240,6 +261,7 @@ namespace MFormatik.ViewModels.OrderVms
         {
             Total = OrderCalculationHelper.CalculateTotal(FinalProductLines.Select(pl => pl.NetPrice));
             TotalNet = OrderCalculationHelper.CalculateTotalNet((decimal)Total, (decimal)DiscountRate!);
+            CheckIfallProductsAreValidated();
         }
 
         #region Favorites Manipulation
