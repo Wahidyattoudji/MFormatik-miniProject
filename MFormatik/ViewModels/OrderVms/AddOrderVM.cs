@@ -4,6 +4,7 @@ using MFormatik.Application.MediatorService;
 using MFormatik.Core.DTOs;
 using MFormatik.Core.Models;
 using MFormatik.Helpers;
+using MFormatik.Services.Abstracts;
 using MFormatik.ViewModels.ProductVms;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -71,6 +72,7 @@ namespace MFormatik.ViewModels.OrderVms
         public ICommand CancelCommand { get; }
         public ICommand AddProductCommand { get; }
 
+        public ICloseable Closeable { get; set; }
         private Visibility _isAddProductVisible;
         public Visibility IsAddProductVisible
         {
@@ -84,6 +86,8 @@ namespace MFormatik.ViewModels.OrderVms
         }
 
 
+        public ICommand DropCommand { get; }
+        public ProductLineViewModel DragData { get; set; }
 
         public AddOrderVM(IMediator mediator)
         {
@@ -97,6 +101,7 @@ namespace MFormatik.ViewModels.OrderVms
             SaveCommand = new RelayCommand(() => SaveOrder());
             CancelCommand = new RelayCommand(CloseWindow);
             AddProductCommand = new RelayCommand(AddProductToOrder);
+            DropCommand = new RelayCommand<DropInfo>(OnDrop);
 
             EventDispatcher.Subscribe("RefreshValues", RefreshValues);
             EventDispatcher.Subscribe("DeleteProduct", DeleteProduct);
@@ -105,9 +110,22 @@ namespace MFormatik.ViewModels.OrderVms
             LoadData();
             ClearData();
         }
-        ~AddOrderVM()
+
+        private void OnDrop(DropInfo dropInfo)
         {
-            _mediator.Unsubscribe("RefrshValues", RefreshValues);
+            var source = dropInfo.Data as ProductLineViewModel;
+            var target = dropInfo.Target as ProductLineViewModel;
+
+            if (source == null || target == null || source == target) return;
+
+            int oldIndex = TempProductLines.IndexOf(source);
+            int newIndex = TempProductLines.IndexOf(target);
+
+            if (oldIndex >= 0 && newIndex >= 0)
+            {
+                TempProductLines.Move(oldIndex, newIndex);
+            }
+            UpdatePositions();
         }
 
         private void AddProductToOrder()
@@ -137,7 +155,6 @@ namespace MFormatik.ViewModels.OrderVms
                 OnPropertyChanged(nameof(FinalProductLines));
             }
         }
-
 
         private void RefreshValues(object obj)
         {
@@ -180,10 +197,7 @@ namespace MFormatik.ViewModels.OrderVms
                 FinalProductLines[i].Position = i + 1;
         }
 
-        private void CloseWindow()
-        {
-
-        }
+        private void CloseWindow() => Closeable?.Close();
 
         private async Task SaveOrder()
         {
@@ -210,6 +224,7 @@ namespace MFormatik.ViewModels.OrderVms
             var result = await _mediator.OrderService.CreateOrderAsync(newOrder);
             MsgHelper.ShowInformation("La commande a été validée", "Ajouter une information");
             ClearData();
+            CloseWindow();
         }
     }
 }
